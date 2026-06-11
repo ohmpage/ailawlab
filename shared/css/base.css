@@ -1,0 +1,48 @@
+/* ── Reset & base ─────────────────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --navy:   #1a1a2e;
+  --red:    #e94560;
+  --blue:   #0f3460;
+  --gold:   #f5a623;
+  --bg:     #f7f6f3;
+  --white:  #ffffff;
+  --border: #ddd;
+  --text:   #222;
+  --muted:  #666;
+  --radius: 8px;
+  --shadow: 0 2px 12px rgba(0,0,0,0.10);
+}
+
+html { font-size: 16px; scroll-behavior: smooth; }
+
+body {
+  font-family: Georgia, 'Times New Roman', serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+}
+
+h1, h2, h3 { font-family: Georgia, serif; line-height: 1.2; }
+a { color: var(--blue); }
+
+/* ── Top bar ──────────────────────────────────────────────────────────────── */
+header {
+  background: var(--navy);
+  color: #fff;
+  padding: 0.75rem 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+header h1 { font-size: 1.1rem; font-weight: normal; letter-spacing: 0.02em; }
+header h1 span { color: var(--red); }
+
+.byline {
+  font-size: 0.8rem;
+  font-family: sans-serif;
+  color: #ccc;
+}
+.byline a { color: #fff; text-decoration: none; }
+.byline a:hover { text-decoration: underline; }

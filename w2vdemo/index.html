@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Word Vectors &amp; Bias — Interactive Demo</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<!-- ── Loading overlay ─────────────────────────────────────────────────── -->
+<div id="loading-overlay">
+  <div id="load-status">Loading word vectors…</div>
+  <div class="progress-track"><div id="progress-bar"></div></div>
+</div>
+
+<!-- ── Top bar ─────────────────────────────────────────────────────────── -->
+<header>
+  <h1>Word Vectors &amp; <span>Bias</span></h1>
+  <p class="byline">Vibe Coded by <a href="https://www.paulohm.com/">Paul Ohm</a></p>
+</header>
+
+<!-- ── Explainer (4 slides) ────────────────────────────────────────────── -->
+<section id="explainer">
+  <div class="slide-card">
+    <h2 id="slide-title"></h2>
+    <p  id="slide-body"></p>
+    <div id="slide-viz"></div>
+    <nav class="slide-nav">
+      <button id="btn-prev">← Back</button>
+      <button id="btn-next">Next →</button>
+      <button id="btn-skip">Skip to demo</button>
+      <div class="dots">
+        <div class="dot"></div>
+        <div class="dot"></div>
+        <div class="dot"></div>
+        <div class="dot"></div>
+      </div>
+    </nav>
+  </div>
+</section>
+
+<!-- ── Demo ────────────────────────────────────────────────────────────── -->
+<section id="demo">
+  <h2>Explore word vector arithmetic</h2>
+  <p class="subtitle">
+    Enter three words to complete the analogy. The model finds the word that
+    stands in the same relationship to the third word as the first does to the second,
+    using real word vector data.
+  </p>
+
+  <div class="model-toggle">
+    <span class="model-toggle-label">Embeddings:</span>
+    <button class="model-btn active" data-model="glove"      disabled>GloVe 6B</button>
+    <button class="model-btn"        data-model="googlenews" disabled>Google News <small>+ phrases</small></button>
+    <button class="model-btn"        data-model="twitter"    disabled>GloVe Twitter</button>
+  </div>
+
+  <div class="analogy-form">
+    <div class="input-row">
+      <input id="word-a" type="text" placeholder="e.g. king"       autocomplete="off" spellcheck="false">
+      <span class="op">is to</span>
+      <input id="word-b" type="text" placeholder="e.g. man"        autocomplete="off" spellcheck="false">
+      <span class="op">as</span>
+      <input id="word-c" type="text" placeholder="e.g. woman"      autocomplete="off" spellcheck="false">
+      <span class="op">is to</span>
+      <button id="compute-btn" disabled>?</button>
+    </div>
+
+    <div class="examples-row">
+      <span class="label">Try:</span>
+      <!-- injected by renderExamples() in app.js -->
+    </div>
+  </div>
+
+  <div id="error-box"></div>
+
+  <div id="result-box">
+    <div id="equation-recap"></div>
+    <span id="result-word"></span>
+    <span id="result-score"></span>
+    <p class="also-label">Also nearby:</p>
+    <div id="result-list"></div>
+    <p id="bc-similarity"></p>
+  </div>
+
+  <div id="viz-card">
+    <h3>Geometric view</h3>
+    <p class="viz-note">
+      Words plotted in their actual vector positions (projected to 2D). The red node is the result.
+      The two arrows show the same relationship — they point in the same direction because
+      the model learned to encode it that way. The orange dot, when shown, marks the exact
+      geometric prediction before finding the nearest word.
+    </p>
+    <svg id="viz"></svg>
+  </div>
+</section>
+
+<!-- ── Papers footer ───────────────────────────────────────────────────── -->
+<footer class="papers-section">
+  <div class="papers-grid">
+    <h3>Foundational research</h3>
+    <div class="paper-link">
+      <a href="https://arxiv.org/abs/1607.06520" target="_blank">
+        Man is to Computer Programmer as Woman is to Homemaker?
+      </a><br>
+      <span class="venue">Bolukbasi et al., NeurIPS 2016</span>
+    </div>
+    <div class="paper-link">
+      <a href="https://www.science.org/doi/10.1126/science.aal4230" target="_blank">
+        Semantics derived automatically from language corpora contain human-like biases
+      </a><br>
+      <span class="venue">Caliskan et al., <em>Science</em> 2017</span>
+    </div>
+    <div class="paper-link">
+      <a href="https://www.pnas.org/doi/10.1073/pnas.1720347115" target="_blank">
+        Word embeddings quantify 100 years of gender and ethnic stereotypes
+      </a><br>
+      <span class="venue">Garg et al., PNAS 2018</span>
+    </div>
+    <div class="paper-link">
+      <a href="https://arxiv.org/abs/1904.04047" target="_blank">
+        Black is to Criminal as Caucasian is to Police
+      </a><br>
+      <span class="venue">Manzini et al., NAACL 2019</span>
+    </div>
+    <div class="paper-link">
+      <a href="https://aclanthology.org/2020.acl-main.485/" target="_blank">
+        Language (Technology) is Power: A Critical Survey of "Bias" in NLP
+      </a><br>
+      <span class="venue">Blodgett et al., ACL 2020</span>
+    </div>
+    <div class="paper-link">
+      <a href="https://dl.acm.org/doi/10.1145/3442188.3445922" target="_blank">
+        On the Dangers of Stochastic Parrots
+      </a><br>
+      <span class="venue">Bender, Gebru et al., FAccT 2021</span>
+    </div>
+  </div>
+</footer>
+
+<script src="https://d3js.org/d3.v7.min.js"></script>
+<script src="js/vectors.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
