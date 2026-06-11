@@ -202,8 +202,8 @@ const SLIDES = [
     title: 'These patterns encode our biases',
     body: `The model learned from billions of words of real text — written
            by humans, reflecting who wrote it and what they assumed.
-           Those assumptions live in the geometry.
-           The result is not always reassuring. Try it yourself:`,
+           Those assumptions live in the geometry. A perfect analogy forms
+           a rectangle; distortion reveals how rough the match is. Try it yourself:`,
     draw: drawSlide4,
   },
 ];
@@ -447,33 +447,43 @@ function drawSlide4(sel) {
   addArrowDef(svg, 'arr4b', COLORS.arrowAlt);
   const g = svg.append('g');
 
-  // Left-to-right layout: top pair (man→programmer), bottom pair (woman→homemaker)
+  // Real GloVe 6B projection: man : programmer :: woman : prodigy
+  // Pixel coordinates derived from projectAnalogy() — yields a visibly skewed parallelogram.
   const pts = {
-    man:        { x: 185, y: 148 },
-    programmer: { x: 480, y: 148 },
-    woman:      { x: 185, y: 272 },
-    homemaker:  { x: 480, y: 272 },
+    man:        { x: 173, y: 232 },
+    programmer: { x: 547, y: 232 },
+    woman:      { x: 191, y:  83 },
+    prodigy:    { x: 454, y: 147 },
   };
 
+  // Shaded parallelogram with dashed border — distortion is the point
   g.append('polygon')
-    .attr('points', [pts.man, pts.programmer, pts.homemaker, pts.woman]
+    .attr('points', [pts.man, pts.programmer, pts.prodigy, pts.woman]
       .map(p => `${p.x},${p.y}`).join(' '))
-    .attr('fill', '#fce8e8').attr('opacity', 0.6);
+    .attr('fill', '#fce8e8').attr('opacity', 0.7)
+    .attr('stroke', '#dda8a8').attr('stroke-width', 1.5).attr('stroke-dasharray', '5,3');
 
-  // Two parallel left-to-right arrows — same direction applied to man and to woman
   drawArrow(g, pts.man,   pts.programmer, 'arr4b', { color: COLORS.arrowAlt, width: 2.5 });
-  drawArrow(g, pts.woman, pts.homemaker,  'arr4b', { color: COLORS.arrowAlt, width: 2.5 });
+  drawArrow(g, pts.woman, pts.prodigy,    'arr4b', { color: COLORS.arrowAlt, width: 2.5 });
 
-  Object.entries(pts).forEach(([w, p]) => drawWord(g, p, w));
+  drawWord(g, pts.man,        'man');
+  drawWord(g, pts.programmer, 'programmer', { fontSize: 9 });
+  drawWord(g, pts.woman,      'woman');
 
-  const eq = g.append('text').attr('x', 60).attr('y', 335)
+  // Result node: red fill with white text, matching the demo's result style
+  g.append('circle')
+    .attr('cx', pts.prodigy.x).attr('cy', pts.prodigy.y).attr('r', 22)
+    .attr('fill', COLORS.highlight).attr('stroke', COLORS.node).attr('stroke-width', 2);
+  g.append('text')
+    .attr('x', pts.prodigy.x).attr('y', pts.prodigy.y + 5)
+    .attr('text-anchor', 'middle').attr('font-size', 11)
+    .attr('font-family', 'Georgia, serif').attr('fill', '#fff')
+    .text('prodigy');
+
+  const eq = g.append('text').attr('x', 60).attr('y', 308)
     .attr('font-size', 15).attr('font-family', 'Georgia, serif');
   eq.append('tspan').attr('fill', COLORS.node).text('man is to programmer as woman is to ');
-  eq.append('tspan').attr('fill', COLORS.arrow).attr('font-weight', 'bold').text('homemaker');
-
-  g.append('text').attr('x', 60).attr('y', 360)
-    .attr('font-size', 12).attr('fill', '#888').attr('font-style', 'italic')
-    .text('This is from a model trained on real text — not a toy example. What else does it encode?');
+  eq.append('tspan').attr('fill', COLORS.highlight).attr('font-weight', 'bold').text('prodigy');
 }
 
 // ─── Word resolution (space → underscore for phrase-capable models) ───────────
@@ -548,26 +558,22 @@ function runAnalogy() {
     { word: a, vec: vecA },
     { word: b, vec: vecB },
     { word: c, vec: vecC },
-    { word: top.word, vec: vecD },
-    target
+    { word: top.word, vec: vecD }
   );
 }
 
 // ─── D3 analogy visualization ─────────────────────────────────────────────────
 
-function drawAnalogyViz(wA, wB, wC, wD, predicted) {
-  const W = 700, H = 420, margin = { top: 44, right: 70, bottom: 62, left: 70 };
+function drawAnalogyViz(wA, wB, wC, wD) {
+  const W = 700, H = 380, margin = { top: 24, right: 50, bottom: 44, left: 50 };
   const iw = W - margin.left - margin.right;
   const ih = H - margin.top  - margin.bottom;
 
   const m = getActiveModel();
   const pts2d = m.projectAnalogy(wA.vec, wB.vec, wC.vec, wD.vec);
-  const pred2d = m.projectAnalogy(wA.vec, wB.vec, wC.vec, predicted)[3];
 
-  // Include origin (0,0) in domain so axes are anchored at A's position
-  const allX = [...pts2d.map(p => p.x), pred2d.x, 0];
-  const allY = [...pts2d.map(p => p.y), pred2d.y, 0];
-  const xExt = d3.extent(allX), yExt = d3.extent(allY);
+  const xExt = d3.extent(pts2d, p => p.x);
+  const yExt = d3.extent(pts2d, p => p.y);
   const pad = 0.22;
   const xRange = xExt[1] - xExt[0] || 1;
   const yRange = yExt[1] - yExt[0] || 1;
@@ -579,12 +585,8 @@ function drawAnalogyViz(wA, wB, wC, wD, predicted) {
     .domain([yExt[0] - yRange * pad, yExt[1] + yRange * pad])
     .range([ih, 0]);
 
-  const px  = i => xScale(pts2d[i].x);
-  const py  = i => yScale(pts2d[i].y);
-  const ppx = xScale(pred2d.x);
-  const ppy = yScale(pred2d.y);
-  const ox  = xScale(0);   // origin in SVG coords
-  const oy  = yScale(0);
+  const px = i => xScale(pts2d[i].x);
+  const py = i => yScale(pts2d[i].y);
 
   d3.select('#viz').html('');
   const svg = d3.select('#viz')
@@ -593,42 +595,18 @@ function drawAnalogyViz(wA, wB, wC, wD, predicted) {
     .style('width', '100%').style('height', 'auto');
 
   const defs = svg.append('defs');
-  const mkArrow = (id, color) => {
-    defs.append('marker')
-      .attr('id', id).attr('markerWidth', 8).attr('markerHeight', 6)
-      .attr('refX', 8).attr('refY', 3).attr('orient', 'auto')
-      .append('polygon').attr('points', '0 0, 8 3, 0 6').attr('fill', color);
-  };
-  mkArrow('av-axis',   '#aaa');
-  mkArrow('av-blue',   '#0f3460');
-  mkArrow('av-orange', '#f5a623');
+  defs.append('marker')
+    .attr('id', 'av-blue').attr('markerWidth', 8).attr('markerHeight', 6)
+    .attr('refX', 8).attr('refY', 3).attr('orient', 'auto')
+    .append('polygon').attr('points', '0 0, 8 3, 0 6').attr('fill', '#0f3460');
 
   const g = svg.append('g').attr('transform', `translate(${margin.left},${margin.top})`);
 
-  // ── Coordinate axes ──────────────────────────────────────────────────────────
-  g.append('line')
-    .attr('x1', 0).attr('y1', oy).attr('x2', iw).attr('y2', oy)
-    .attr('stroke', '#aaa').attr('stroke-width', 1.5)
-    .attr('marker-end', 'url(#av-axis)');
-
-  g.append('line')
-    .attr('x1', ox).attr('y1', ih).attr('x2', ox).attr('y2', 0)
-    .attr('stroke', '#aaa').attr('stroke-width', 1.5)
-    .attr('marker-end', 'url(#av-axis)');
-
-  g.append('circle').attr('cx', ox).attr('cy', oy).attr('r', 3).attr('fill', '#999');
-  g.append('text').attr('x', ox - 9).attr('y', oy + 13)
-    .attr('font-size', 10).attr('fill', '#aaa').attr('text-anchor', 'middle').text('0');
-
-  g.append('text').attr('x', iw + 8).attr('y', oy + 4)
-    .attr('font-size', 11).attr('fill', '#aaa').text('x');
-  g.append('text').attr('x', ox + 5).attr('y', -6)
-    .attr('font-size', 11).attr('fill', '#aaa').text('y');
-
-  g.append('text').attr('x', iw / 2).attr('y', ih + 48)
-    .attr('text-anchor', 'middle').attr('font-size', 10)
-    .attr('fill', '#888').attr('font-style', 'italic')
-    .text(`x axis: direction of the relationship  (${wA.word} → ${wB.word})`);
+  // ── Parallelogram: A → B → D → C ─────────────────────────────────────────────
+  g.append('polygon')
+    .attr('points', [0, 1, 3, 2].map(i => `${px(i)},${py(i)}`).join(' '))
+    .attr('fill', '#fce8e8').attr('opacity', 0.7)
+    .attr('stroke', '#dda8a8').attr('stroke-width', 1.5).attr('stroke-dasharray', '5,3');
 
   // ── Two parallel arrows ───────────────────────────────────────────────────────
   const nodeR     = 17;
@@ -636,31 +614,18 @@ function drawAnalogyViz(wA, wB, wC, wD, predicted) {
   const nodeFills = ['#fff',    '#fff',    '#fff',    '#e94560'];
   const textFills = ['#1a1a2e', '#1a1a2e', '#1a1a2e', '#fff'   ];
 
-  function arrowLine(x1, y1, x2, y2, r1, r2, markerId, color, dash) {
+  function arrowLine(x1, y1, x2, y2, r1, r2) {
     const dx = x2 - x1, dy = y2 - y1;
     const len = Math.sqrt(dx * dx + dy * dy) || 1;
     g.append('line')
       .attr('x1', x1 + dx / len * r1).attr('y1', y1 + dy / len * r1)
       .attr('x2', x2 - dx / len * r2).attr('y2', y2 - dy / len * r2)
-      .attr('stroke', color).attr('stroke-width', 2.5)
-      .attr('stroke-dasharray', dash || null)
-      .attr('marker-end', `url(#${markerId})`);
+      .attr('stroke', '#0f3460').attr('stroke-width', 2.5)
+      .attr('marker-end', 'url(#av-blue)');
   }
 
-  arrowLine(px(0), py(0), px(1), py(1), nodeR, nodeR, 'av-blue', '#0f3460');
-  arrowLine(px(2), py(2), px(3), py(3), nodeR, nodeR, 'av-blue', '#0f3460');
-
-  // Predicted point (exact arithmetic before nearest-neighbor lookup)
-  const predR = 5;
-  const predDist = Math.sqrt((ppx - px(3)) ** 2 + (ppy - py(3)) ** 2);
-  if (predDist > 5) {
-    g.append('circle').attr('cx', ppx).attr('cy', ppy).attr('r', predR)
-      .attr('fill', '#f5a623').attr('opacity', 0.85);
-    g.append('text').attr('x', ppx + 8).attr('y', ppy - 8)
-      .attr('font-size', 10).attr('fill', '#f5a623').attr('font-style', 'italic')
-      .text('predicted');
-    arrowLine(ppx, ppy, px(3), py(3), predR, nodeR, 'av-orange', '#f5a623', '4,3');
-  }
+  arrowLine(px(0), py(0), px(1), py(1), nodeR, nodeR);
+  arrowLine(px(2), py(2), px(3), py(3), nodeR, nodeR);
 
   // ── Word nodes ───────────────────────────────────────────────────────────────
   [0, 1, 2, 3].forEach(i => {
@@ -671,6 +636,11 @@ function drawAnalogyViz(wA, wB, wC, wD, predicted) {
       .attr('font-family', 'Georgia, serif').attr('fill', textFills[i])
       .text(labels[i]);
   });
+
+  g.append('text').attr('x', iw / 2).attr('y', ih + 32)
+    .attr('text-anchor', 'middle').attr('font-size', 10)
+    .attr('fill', '#888').attr('font-style', 'italic')
+    .text('A perfect analogy forms a rectangle. Distortion shows how rough the match is.');
 }
 
 // ─── Utility ──────────────────────────────────────────────────────────────────
