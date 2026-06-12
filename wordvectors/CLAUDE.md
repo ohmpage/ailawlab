@@ -1,4 +1,4 @@
-# w2vdemo — Word Vectors & Bias Interactive Demo
+# wordvectors — Word Vectors & Bias Interactive Demo
 
 ## What this is
 
@@ -163,3 +163,8 @@ Three-model toggle (GloVe 6B, Google News + phrases, GloVe Twitter):
 - **Phrase support**: `resolveWord()` silently retries with spaces converted to underscores (e.g. `computer programmer` → `computer_programmer`), so bigram example buttons show natural English without underscores.
 - **Data layout**: Reorganized from flat `data/` into `data/glove/`, `data/googlenews/`, `data/twitter/` subdirectories.
 - **`prepare_vectors.py` extended**: New `--format word2vec` flag reads Google News binary format; lowercases all words for consistent JS lookup; writes vectors row-by-row (handles any dimension).
+
+### Version 5 — stopping point: June 2026
+Geometric view redesign and slide 4 update:
+- **Geometric view (Option A)**: Replaced the coordinate-axes + orange-predicted-dot visualization with a cleaner parallelogram design. A pink shaded quadrilateral connects all four word nodes (A→B→D→C); a perfect analogy forms a rectangle and distortion reveals how rough the match is. Axes, origin marker, and predicted-point orange dot all removed. Caption updated to explain the rectangle/distortion framing. Margins tightened now that axis labels are gone.
+- **Slide 4 redrawn**: Previously used hardcoded schematic positions forming a perfect rectangle (man:programmer::woman:homemaker — a result from word2vec Google News, not GloVe 6B). Now uses real GloVe 6B projection coordinates for man:programmer::woman:prodigy, producing a visibly skewed parallelogram that matches what the demo actually shows. Result node (prodigy) styled in red with white text, consistent with the demo. Dashed parallelogram border added. Body text updated to introduce the rectangle/distortion framing before the student tries the demo.

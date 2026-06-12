@@ -15,7 +15,7 @@ index.html              Landing page linking to all tools
 shared/
   css/
     base.css            Shared reset, CSS variables, header, byline styles
-w2vdemo/                Word Vectors & Bias demo (see w2vdemo/CLAUDE.md)
+wordvectors/            Word Vectors & Bias demo (see wordvectors/CLAUDE.md)
 ```
 
 Each tool lives in its own subdirectory with its own `index.html`, `css/style.css`, and `js/`. Tool-specific styles import the shared base via a `<link>` tag in the HTML.
@@ -75,4 +75,4 @@ See each tool's `CLAUDE.md` for tool-specific data setup and deployment notes (s
 ## Version history
 
 ### Suite Version 1 — June 2026
-Monorepo reorganization. w2vdemo moved into `w2vdemo/` subdirectory. Shared CSS extracted into `shared/css/base.css`. Root landing page added.
+Monorepo reorganization. Word vectors tool moved into `wordvectors/` subdirectory (originally `w2vdemo/`). Shared CSS extracted into `shared/css/base.css`. Root landing page added.
