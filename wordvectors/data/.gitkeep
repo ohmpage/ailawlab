@@ -1,0 +1,10 @@
+# Run scripts/prepare_vectors.py to generate vocab.json and vectors.bin here.
+# See README for instructions.
+#
+# Expected layout:
+#   data/glove/vocab.json
+#   data/glove/vectors.bin
+#   data/googlenews/vocab.json   (optional — needed for Google News toggle)
+#   data/googlenews/vectors.bin
+#   data/twitter/vocab.json      (optional — needed for GloVe Twitter toggle)
+#   data/twitter/vectors.bin

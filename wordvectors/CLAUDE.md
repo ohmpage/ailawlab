@@ -71,7 +71,7 @@ Any static server works (VS Code Live Server, `npx serve`, etc.).
 
 ## Deploying for students (GitHub Pages)
 
-1. Commit the contents of `data/glove/` (and optionally `data/googlenews/` and `data/twitter/`) to the repo (they're gitignored by default — use `git add -f data/glove/`).
+1. Commit the contents of `data/glove/` (and optionally `data/googlenews/` and `data/twitter/`) to the repo. The `data/` directory is tracked in git; just `git add wordvectors/data/` normally.
 2. Push to GitHub and enable Pages on the `main` branch.
 3. Share the Pages URL. Students click it, wait ~10–30 seconds for GloVe to load, then the tool is fully interactive. Alternate models lazy-load on first click.
 

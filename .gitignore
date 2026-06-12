@@ -1,5 +1,4 @@
 .DS_Store
-wordvectors/data/
 wordvectors/raw/
 wordvectors/inbox/
 wordvectors/prototypes/
