@@ -119,6 +119,7 @@ async function switchModel(key) {
   // Already loaded — just swap examples
   if (modelInstances[key]?.ready) {
     renderExamples(key);
+    if (allFieldsFilled()) runAnalogy();
     return;
   }
 
@@ -129,6 +130,7 @@ async function switchModel(key) {
   document.querySelectorAll('.model-btn').forEach(b => b.disabled = true);
   renderExamples(key); // renders disabled example buttons as a placeholder
 
+  btn.textContent = 'Loading… 0%';
   try {
     await loadModelByKey(key, pct => {
       btn.textContent = `Loading… ${Math.round(pct * 100)}%`;
@@ -145,6 +147,7 @@ async function switchModel(key) {
   document.getElementById('compute-btn').disabled = false;
   document.querySelectorAll('.model-btn').forEach(b => b.disabled = false);
   renderExamples(key);
+  if (allFieldsFilled()) runAnalogy();
 }
 
 function renderExamples(key) {
@@ -499,6 +502,12 @@ function resolveWord(raw) {
 }
 
 // ─── Demo: run the analogy ────────────────────────────────────────────────────
+
+function allFieldsFilled() {
+  return ['word-a', 'word-b', 'word-c'].every(
+    id => document.getElementById(id).value.trim() !== ''
+  );
+}
 
 function runAnalogy() {
   const m = getActiveModel();
