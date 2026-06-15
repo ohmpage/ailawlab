@@ -434,10 +434,6 @@ function onWorkerMessage(e) {
       document.getElementById('controls-bar').classList.remove('hidden');
       setRunBtn('Step', false);
       startRenderLoop();
-      // Auto-run one epoch so weights are visible immediately
-      isBusy = true;
-      setRunBtn('Step', true);
-      worker.postMessage({ op: 'step', mode: 'epoch', count: 1 });
       break;
 
     case 'node_ff_done':
@@ -721,7 +717,8 @@ function drawFrame() {
       // Value below node: threshold for hidden/output, current output for input
       var sublabel = null;
       if (node.type === 'input') {
-        sublabel = (node.output !== undefined) ? node.output.toFixed(1) : '';
+        var v = node.output;
+        sublabel = (v !== undefined) ? (Math.round(v) === v ? String(Math.round(v)) : v.toFixed(3)) : '';
       } else if (node.thres !== null && node.thres !== undefined) {
         sublabel = 'b=' + node.thres.toFixed(3);
       }

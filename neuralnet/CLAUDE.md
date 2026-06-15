@@ -149,7 +149,21 @@ No special steps. The entire `neuralnet/` directory ships as-is — no data file
 
 ---
 
+## Nuances and non-obvious behavior
+
+**Progress bars are a proxy, not the convergence check.** The bar measures reduction in delta (the backprop error signal) relative to initialization. 100% means delta reached zero; 0% means no improvement. The actual convergence test — which stops training — is separate: it checks whether `|output − target| ≤ tolerance` after each forward pass. The two can diverge slightly.
+
+**Delta in the tooltip is stale during the forward pass.** Delta is only recomputed during backpropagation (red node). After a forward pass (green node), the tooltip still shows the delta from the previous backward pass. This is correct behavior, not a bug.
+
+**Edge magnitude is not visually encoded.** Edge color encodes sign (blue = positive, red = negative). Weight magnitude is shown only by the number in the pill. Line thickness and opacity are fixed. Adding magnitude-to-thickness encoding would require normalization to avoid thick edges when weights grow large.
+
+**Input node values display as integers when the value is whole.** The renderer checks `Math.round(v) === v` and omits the decimal if true. Non-integer inputs (e.g., 0.5) display as decimals.
+
+**Build shows raw random weights.** No epoch runs automatically on build — the network displays its initial random state immediately. This is intentional: seeing the randomized starting weights before training begins is pedagogically useful.
+
+---
+
 ## Version history
 
 ### Version 1 — June 2026
-Initial build. Reskin and extension of drdrsh/interactive-bpann. Core math (nn-worker.js) and UX concepts adapted from the original; canvas renderer, weight pills, explainer slides, tour, and visual design are new.
+Initial build. Reskin and extension of drdrsh/interactive-bpann. Core math (nn-worker.js) and UX concepts adapted from the original; canvas renderer, weight pills, four-slide explainer, six-step guided tour, color-coded data table, per-example progress rail, hover dimming, persistent node color states, and visual redesign are new.
