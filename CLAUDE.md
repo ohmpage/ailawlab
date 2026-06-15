@@ -16,6 +16,7 @@ shared/
   css/
     base.css            Shared reset, CSS variables, header, byline styles
 wordvectors/            Word Vectors & Bias demo (see wordvectors/CLAUDE.md)
+neuralnet/              Neural Network Trainer demo (see neuralnet/CLAUDE.md)
 ```
 
 Each tool lives in its own subdirectory with its own `index.html`, `css/style.css`, and `js/`. Tool-specific styles import the shared base via a `<link>` tag in the HTML.
@@ -76,3 +77,6 @@ See each tool's `CLAUDE.md` for tool-specific data setup and deployment notes (s
 
 ### Suite Version 1 — June 2026
 Monorepo reorganization. Word vectors tool moved into `wordvectors/` subdirectory (originally `w2vdemo/`). Shared CSS extracted into `shared/css/base.css`. Root landing page added.
+
+### Suite Version 2 — June 2026
+Neural Network Trainer added in `neuralnet/`. No dependencies — plain HTML + CSS + vanilla JS + a Web Worker for the math. No large data files; ships as-is.

@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Neural Network Trainer — Interactive Demo</title>
+  <link rel="stylesheet" href="../shared/css/base.css">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<!-- ── Header ──────────────────────────────────────────────────────────────── -->
+<header>
+  <div class="header-left">
+    <button id="settings-toggle" class="icon-btn" title="Settings" aria-label="Open settings">&#9776;</button>
+    <h1>Neural Network <span>Trainer</span></h1>
+  </div>
+  <p class="byline">by <a href="https://www.paulohm.com/">Paul Ohm</a>
+    &ensp;·&ensp; <a id="tour-link" href="#">Take a tour</a></p>
+</header>
+
+<!-- ── Explainer (4 slides) ────────────────────────────────────────────────── -->
+<section id="explainer">
+  <div class="slide-card">
+    <button id="btn-skip" class="skip-btn">Skip to demo &rarr;</button>
+    <h2 id="slide-title"></h2>
+    <p  id="slide-body"></p>
+    <div id="slide-viz"></div>
+    <nav class="slide-nav">
+      <button id="btn-prev">&#8592; Back</button>
+      <button id="btn-next">Next &#8594;</button>
+      <div class="dots">
+        <div class="dot"></div>
+        <div class="dot"></div>
+        <div class="dot"></div>
+        <div class="dot"></div>
+      </div>
+    </nav>
+  </div>
+</section>
+
+<!-- ── App shell (hidden until explainer done) ─────────────────────────────── -->
+<div id="app" class="hidden">
+
+  <!-- Settings drawer -->
+  <aside id="settings-panel">
+    <div class="panel-inner">
+      <h2>Network Settings</h2>
+      <div class="field-row">
+        <label for="cfg-epochs">Epochs</label>
+        <input type="number" id="cfg-epochs" min="100" max="50000" step="100" value="15000">
+      </div>
+      <div class="field-row">
+        <label for="cfg-lr">Learning Rate</label>
+        <input type="number" id="cfg-lr" min="0.01" max="5" step="0.01" value="0.5">
+      </div>
+      <div class="field-row">
+        <label for="cfg-tol">Tolerance</label>
+        <input type="number" id="cfg-tol" min="0.01" max="0.5" step="0.01" value="0.1">
+      </div>
+      <div class="field-row">
+        <label for="cfg-layers">Hidden Layers</label>
+        <input type="number" id="cfg-layers" min="1" max="5" step="1" value="1">
+      </div>
+      <div id="nodes-per-layer"></div>
+
+      <h2>Training Data</h2>
+      <div id="data-table-wrap">
+        <!-- rendered by app.js -->
+      </div>
+      <div class="table-controls">
+        <button id="btn-add-row">+ Row</button>
+        <button id="btn-del-row">− Row</button>
+        <button id="btn-add-input">+ Input</button>
+        <button id="btn-add-output">+ Output</button>
+        <button id="btn-del-col">− Column</button>
+      </div>
+
+      <button id="btn-reset" class="reset-btn">Reset to Defaults</button>
+      <button id="btn-build" class="build-btn">Build Network</button>
+    </div>
+  </aside>
+
+  <!-- Main content -->
+  <main id="main-content">
+
+    <!-- Network canvas area -->
+    <div id="canvas-wrap">
+      <div id="canvas-placeholder">
+        <p>Configure your network and click <strong>Build Network</strong> to begin.</p>
+      </div>
+      <canvas id="nn-canvas"></canvas>
+      <div id="node-tooltip"></div>
+    </div>
+
+    <!-- Right rail: per-example progress -->
+    <div id="progress-rail" class="hidden">
+      <h3>Learning Progress</h3>
+      <p class="progress-sub">by example</p>
+      <div id="progress-list"></div>
+      <div id="epoch-counter"></div>
+    </div>
+
+  </main>
+
+  <!-- Bottom controls bar -->
+  <div id="controls-bar" class="hidden">
+    <div class="controls-inner">
+      <span class="ctrl-label">Step by:</span>
+      <div class="radio-group">
+        <label><input type="radio" name="step-mode" value="node"    checked> Node</label>
+        <label><input type="radio" name="step-mode" value="layer">          Layer</label>
+        <label><input type="radio" name="step-mode" value="example">        Example</label>
+        <label><input type="radio" name="step-mode" value="epoch">          Epoch</label>
+        <label><input type="radio" name="step-mode" value="full">           Full run</label>
+      </div>
+      <span class="ctrl-label">×</span>
+      <input type="number" id="step-count" min="1" max="500" step="1" value="1">
+      <button id="btn-run" class="run-btn">Step</button>
+      <span id="training-status"></span>
+    </div>
+  </div>
+
+</div>
+
+<!-- Tour tooltip bubble -->
+<div id="tour-bubble" class="hidden">
+  <button id="tour-close" class="tour-close">&times;</button>
+  <p id="tour-text"></p>
+  <div class="tour-nav">
+    <button id="tour-prev">&#8592; Prev</button>
+    <button id="tour-next">Next &#8594;</button>
+  </div>
+</div>
+
+<script src="js/app.js"></script>
+</body>
+</html>
