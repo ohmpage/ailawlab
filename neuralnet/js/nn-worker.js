@@ -18,6 +18,7 @@ var currentLayer   = 1;
 var currentMode    = '';
 var currentStep    = 0;
 var maxSteps       = 1;
+var nodeEventsSinceYield = 0;  // guards against yielding with no node events (boundary no-op)
 
 var networkStepper = null;
 
@@ -58,6 +59,7 @@ function serializeNode(li, ni) {
 
 function emitNode(event, li, ni) {
     emit({ event: event, layerIdx: li, nodeIdx: ni, node: serializeNode(li, ni) });
+    nodeEventsSinceYield++;
 }
 
 function emitNetwork() {
@@ -97,8 +99,8 @@ function emitPaused() {
     emit({ event: 'simulation_paused' });
 }
 
-function emitDone() {
-    emit({ event: 'training_done' });
+function emitDone(converged) {
+    emit({ event: 'training_done', converged: !!converged });
 }
 
 function emitPrediction(outputs) {
@@ -153,6 +155,7 @@ function initExample(exId) {
 
 // ── Training generator ───────────────────────────────────────────────────────
 function* train() {
+    var converged = false;
     for (currentEpoch = 0; currentEpoch < maxEpochs; currentEpoch++) {
 
         var allCorrect = true;
@@ -193,18 +196,30 @@ function* train() {
 
             emitExample(currentExample, allCorrect);
             if (currentMode === 'example') {
-                if (++currentStep >= maxSteps) { emitPaused(); yield; currentStep = 0; }
+                if (++currentStep >= maxSteps) {
+                    if (nodeEventsSinceYield > 0) {
+                        emitPaused(); nodeEventsSinceYield = 0; yield; currentStep = 0;
+                    } else {
+                        currentStep = 0;  // boundary no-op: skip, run next example
+                    }
+                }
             }
         }
 
         emitEpoch(currentEpoch);
         if (currentMode === 'epoch') {
-            if (++currentStep >= maxSteps) { emitPaused(); yield; currentStep = 0; }
+            if (++currentStep >= maxSteps) {
+                if (nodeEventsSinceYield > 0) {
+                    emitPaused(); nodeEventsSinceYield = 0; yield; currentStep = 0;
+                } else {
+                    currentStep = 0;  // boundary no-op: skip, run next epoch
+                }
+            }
         }
 
-        if (allCorrect) break;
+        if (allCorrect) { converged = true; break; }
     }
-    emitDone();
+    emitDone(converged);
 }
 
 // ── Predict (no training) ────────────────────────────────────────────────────
@@ -307,6 +322,7 @@ self.onmessage = function(e) {
         currentMode  = m.mode;
         maxSteps     = m.count || 1;
         currentStep  = 0;
+        nodeEventsSinceYield = 0;
         networkStepper.next();
         return;
     }

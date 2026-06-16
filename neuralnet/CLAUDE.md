@@ -155,7 +155,7 @@ No special steps. The entire `neuralnet/` directory ships as-is — no data file
 
 **Delta in the tooltip is stale during the forward pass.** Delta is only recomputed during backpropagation (red node). After a forward pass (green node), the tooltip still shows the delta from the previous backward pass. This is correct behavior, not a bug.
 
-**Edge magnitude is not visually encoded.** Edge color encodes sign (blue = positive, red = negative). Weight magnitude is shown only by the number in the pill. Line thickness and opacity are fixed. Adding magnitude-to-thickness encoding would require normalization to avoid thick edges when weights grow large.
+**Edge width encodes weight magnitude.** `magWidth = 1 + min(|w|, 5) × 0.6` gives a range of 1–4px. Color encodes sign (blue = positive, red = negative). At initialization weights are small so all edges look similar; differentiation grows as training proceeds.
 
 **Input node values display as integers when the value is whole.** The renderer checks `Math.round(v) === v` and omits the decimal if true. Non-integer inputs (e.g., 0.5) display as decimals.
 
@@ -167,3 +167,14 @@ No special steps. The entire `neuralnet/` directory ships as-is — no data file
 
 ### Version 1 — June 2026
 Initial build. Reskin and extension of drdrsh/interactive-bpann. Core math (nn-worker.js) and UX concepts adapted from the original; canvas renderer, weight pills, four-slide explainer, six-step guided tour, color-coded data table, per-example progress rail, hover dimming, persistent node color states, and visual redesign are new.
+
+### Version 2 — June 2026
+**Scope-aware node coloring.** Step granularity now determines how many nodes are highlighted at pause: one node (Node mode), the full layer (Layer mode), or all nodes (Example/Epoch mode). The worker skips boundary no-ops so switching step modes mid-training no longer produces a black-node first click. Example mode shows a 200ms green flash before settling to red to make the FF→BP transition perceptible.
+
+**Edge width by magnitude.** Line width scales with |weight| (1–4px range), making strong connections visibly thicker than weak ones.
+
+**Defaults / Randomize buttons.** Settings panel now has two half-width buttons side by side: "Defaults" restores XOR and all original settings; "Randomize" fills every cell in the current table with a random 0 or 1.
+
+**Convergence status.** The controls strip shows "Converged" or "Did not converge" when training ends. The worker now emits `converged: true/false` in the `training_done` event.
+
+**Tour bubble fix.** The bubble for the Output nodes step now always places itself on whichever side of the target node has more room, reliably keeping it clear of the output node and its pulse ring.

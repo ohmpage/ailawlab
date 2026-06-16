@@ -300,19 +300,28 @@ header h1 span { color: var(--red); }
 }
 .table-controls button:hover { background: #e8e8e8; }
 
-.reset-btn {
-  width: 100%;
+.btn-pair {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 0.5rem;
+}
+.half-btn {
+  -webkit-appearance: none;
+  appearance: none;
+  flex: 1;
   padding: 0.4rem;
-  background: none;
+  background: var(--bg);
   color: var(--muted);
   border: 1px solid var(--border);
   border-radius: var(--radius);
   font-size: 0.82rem;
   font-family: sans-serif;
-  margin-bottom: 0.5rem;
+  line-height: 1.4;
+  text-align: center;
+  cursor: pointer;
   transition: background 0.15s, color 0.15s;
 }
-.reset-btn:hover { background: #eee; color: var(--text); }
+.half-btn:hover { background: #e8e8e8; color: var(--text); }
 
 .build-btn {
   width: 100%;

@@ -207,7 +207,11 @@ var canvas, ctx;
 var nodePositions = {};   // id → {x, y}
 var activeNodeId  = null; // currently highlighted (tour)
 var hoveredNodeId = null;
-var flashEdges    = {};   // edgeId → timestamp when weight was updated
+var flashEdges        = {};   // edgeId → timestamp when weight was updated
+var recentlyActivated = {};   // nodeId → 'ff'|'bp' — scope-buffered across steps
+var scopeLayerIdx     = null; // last layerIdx seen (drives layer-mode scope resets)
+var scopeColorTimeout = null; // pending timeout for green→red flash in example mode
+var epochFlashStart   = null; // timestamp for gold epoch-boundary flash
 var pulseNode     = null; // {id, start}
 var animFrameId   = null;
 
@@ -246,6 +250,13 @@ function rebuildNodeSelects() {
     }
     wrap.appendChild(sel);
   }
+}
+
+function randomizeData() {
+  tableData.rows = tableData.rows.map(function(row) {
+    return row.map(function() { return Math.round(Math.random()); });
+  });
+  renderDataTable();
 }
 
 function resetToDefaults() {
@@ -382,8 +393,9 @@ function buildNetwork() {
   netLayers = []; netEdges = {}; nodePositions = {};
   exampleColors = []; exampleProgress = []; exampleBaseError = [];
   flashEdges = {}; hoveredNodeId = null; pulseNode = null;
+  if (scopeColorTimeout) { clearTimeout(scopeColorTimeout); scopeColorTimeout = null; }
+  recentlyActivated = {}; scopeLayerIdx = null; epochFlashStart = null;
 
-  document.getElementById('canvas-placeholder').classList.remove('hidden');
   document.getElementById('canvas-placeholder').classList.remove('hidden');
   document.getElementById('progress-rail').classList.add('hidden');
   document.getElementById('controls-bar').classList.add('hidden');
@@ -438,12 +450,12 @@ function onWorkerMessage(e) {
 
     case 'node_ff_done':
       updateNodeState(d.node);
-      markNodeActive(d.node.id, 'ff');
+      markNodeActive(d.node.id, 'ff', d.node.layerIdx);
       break;
 
     case 'node_bp_done':
       updateNodeState(d.node);
-      markNodeActive(d.node.id, 'bp');
+      markNodeActive(d.node.id, 'bp', d.node.layerIdx);
       // Flash edges whose weights just changed
       Object.keys(d.node.weights).forEach(function(eid){
         if (netEdges[eid]) {
@@ -469,19 +481,37 @@ function onWorkerMessage(e) {
     case 'epoch_done':
       var epochEl = document.getElementById('epoch-counter');
       if (epochEl) epochEl.textContent = 'Epoch ' + (d.epochId + 1);
+      var eMode = document.querySelector('input[name="step-mode"]:checked').value;
+      if (eMode === 'epoch' || eMode === 'full') {
+        epochFlashStart = performance.now();
+      }
       break;
 
     case 'simulation_paused':
       isBusy = false;
+      var pMode = document.querySelector('input[name="step-mode"]:checked').value;
+      if (pMode === 'example') {
+        // Briefly show the FF green state before settling to BP red
+        netLayers.forEach(function(layer){
+          layer.forEach(function(n){ if (n.type !== 'input') n._activeColor = '#27ae60'; });
+        });
+        scopeColorTimeout = setTimeout(function(){
+          scopeColorTimeout = null;
+          applyStepScopeColors();
+        }, 200);
+      } else {
+        applyStepScopeColors();
+      }
       setRunBtn('Step', false);
       break;
 
     case 'training_done':
       isBusy = false;
       isDone = true;
-      setRunBtn('Restart', false);
-      document.getElementById('training-status').textContent = 'Training complete';
       clearAllActiveColors();
+      setRunBtn('Restart', false);
+      document.getElementById('training-status').textContent =
+        d.converged ? 'Converged' : 'Did not converge';
       break;
 
     case 'prediction_done':
@@ -504,26 +534,41 @@ function updateNodeState(node) {
   });
 }
 
-function markNodeActive(nodeId, phase) {
-  // Clear all non-input nodes first, then set the one active node.
-  // Color stays permanently until the next Run click or rebuild.
-  netLayers.forEach(function(layer){
-    layer.forEach(function(n){
-      if (n.type !== 'input') n._activeColor = null;
-    });
-  });
-  netLayers.forEach(function(layer){
-    layer.forEach(function(n){
-      if (n.id === nodeId) {
-        n._activeColor = phase === 'ff' ? '#27ae60' : '#cc2200';
-      }
-    });
-  });
+function markNodeActive(nodeId, phase, layerIdx) {
+  var mode = document.querySelector('input[name="step-mode"]:checked').value;
+  if (mode === 'node') {
+    // Each node is its own scope
+    recentlyActivated = {};
+  } else if (mode === 'layer' && layerIdx !== scopeLayerIdx) {
+    // New layer = new scope
+    recentlyActivated = {};
+  }
+  // example / epoch / full: never explicitly reset — natural overwriting per pass handles it
+  scopeLayerIdx = layerIdx;
+  recentlyActivated[nodeId] = phase;
 }
 
 function clearAllActiveColors() {
+  if (scopeColorTimeout) { clearTimeout(scopeColorTimeout); scopeColorTimeout = null; }
   netLayers.forEach(function(layer){
     layer.forEach(function(n){ n._activeColor = null; });
+  });
+  epochFlashStart = null;
+}
+
+function applyStepScopeColors() {
+  netLayers.forEach(function(layer){
+    layer.forEach(function(n){ n._activeColor = null; });
+  });
+  Object.keys(recentlyActivated).forEach(function(nodeId){
+    var phase = recentlyActivated[nodeId];
+    netLayers.forEach(function(layer){
+      layer.forEach(function(n){
+        if (n.id === nodeId) {
+          n._activeColor = phase === 'ff' ? '#27ae60' : '#cc2200';
+        }
+      });
+    });
   });
 }
 
@@ -541,6 +586,7 @@ function updateExampleProgress(exId) {
   exampleProgress[exId] = pct * 100;
   updateProgressRailItem(exId);
 }
+
 
 function setRunBtn(label, disabled) {
   var btn = document.getElementById('btn-run');
@@ -623,6 +669,7 @@ function drawFrame() {
 
     // Edge line color — dimmed edges go light gray; connected edges keep their sign color
     var w = edge.weight;
+    var magWidth = 1 + Math.min(Math.abs(w), 5) * 0.6;  // 1.0–4.0px based on |weight|
     var lineColor, lineAlpha, lineWidth;
     if (dimmed) {
       lineColor = '#bbb';
@@ -631,9 +678,9 @@ function drawFrame() {
     } else {
       lineColor = w >= 0 ? '#4a90d9' : '#d9534f';
       lineAlpha = connected ? 1.0 : 0.55;
-      lineWidth = connected ? 2.5 : 1.5;
+      lineWidth = connected ? magWidth + 0.8 : magWidth;
     }
-    if (isFlashing) { lineColor = '#f5a623'; lineAlpha = 1.0; lineWidth = 2; }
+    if (isFlashing) { lineColor = '#f5a623'; lineAlpha = 1.0; lineWidth = Math.max(magWidth, 2); }
 
     ctx.save();
     ctx.globalAlpha = lineAlpha;
@@ -672,6 +719,14 @@ function drawFrame() {
 
       var baseColor = (node.type === 'input') ? (node.color || '#0f3460') : '#444';
       var fillColor = node._activeColor || baseColor;
+
+      // Epoch-boundary flash: blend all non-input nodes from gold to their final color
+      if (epochFlashStart && node.type !== 'input') {
+        var efElapsed = now - epochFlashStart;
+        if (efElapsed < 800) {
+          fillColor = blendColors('#f5a623', fillColor, efElapsed / 800);
+        }
+      }
 
       // Shadow for depth
       ctx.save();
@@ -1044,23 +1099,23 @@ function showTourStep(i) {
 }
 
 function positionBubbleNearNode(nodeId, bubble) {
+  bubble.style.transform = '';  // clear any stale centering transform
   var pos = nodePositions[nodeId];
   if (!pos || !canvas) { positionBubbleDefault(bubble); return; }
   var rect = canvas.getBoundingClientRect();
   var bw = 280, bh = 150;
   var cx = rect.left + pos.x;
   var cy = rect.top  + pos.y;
-  // Place bubble on whichever side has more room
+  // Pick whichever side has more room
   var spaceRight = window.innerWidth - (cx + NODE_R + 20);
-  var left, top;
-  if (spaceRight >= bw + 10) {
-    left = cx + NODE_R + 20;
-  } else {
-    left = cx - bw - NODE_R - 20;
-  }
-  top = cy - bh / 2;
+  var spaceLeft  = cx - NODE_R - 20;
+  var left = spaceLeft >= spaceRight
+    ? cx - bw - NODE_R - 20   // more room on the left
+    : cx + NODE_R + 20;        // more room on the right
+  // Clamp to viewport
+  left = Math.max(10, Math.min(left, window.innerWidth - bw - 10));
+  var top = cy - bh / 2;
   if (top < 60) top = 60;
-  if (left < 10) left = 10;
   bubble.style.left = left + 'px';
   bubble.style.top  = top  + 'px';
 }
@@ -1141,6 +1196,7 @@ document.addEventListener('DOMContentLoaded', function() {
   // Settings panel
   document.getElementById('cfg-layers').addEventListener('change', rebuildNodeSelects);
   document.getElementById('btn-reset').addEventListener('click', resetToDefaults);
+  document.getElementById('btn-randomize').addEventListener('click', randomizeData);
   document.getElementById('btn-build').addEventListener('click', buildNetwork);
 
   // Table controls
