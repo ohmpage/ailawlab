@@ -435,6 +435,10 @@ header h1 span { color: var(--red); }
   align-items: center;
   gap: 6px;
 }
+.progress-item.active-example .ex-label {
+  font-weight: 700;
+  color: var(--text);
+}
 .ex-swatch {
   width: 10px; height: 10px;
   border-radius: 2px;

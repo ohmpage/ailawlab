@@ -204,6 +204,7 @@ var exampleBaseError = [];
 var exampleOutputs   = [];  // exampleOutputs[i] = array of output values, or null
 var currentTolerance = 0.1;
 var lastPredictedExample = -1;
+var activeExampleId  = 0;
 
 // Canvas rendering
 var canvas, ctx;
@@ -395,7 +396,7 @@ function buildNetwork() {
   isBusy = false; isDone = false; networkReady = false;
   netLayers = []; netEdges = {}; nodePositions = {};
   exampleColors = []; exampleProgress = []; exampleBaseError = [];
-  exampleOutputs = []; lastPredictedExample = -1;
+  exampleOutputs = []; lastPredictedExample = -1; activeExampleId = 0;
   flashEdges = {}; hoveredNodeId = null; pulseNode = null;
   if (scopeColorTimeout) { clearTimeout(scopeColorTimeout); scopeColorTimeout = null; }
   recentlyActivated = {}; scopeLayerIdx = null; epochFlashStart = null;
@@ -447,6 +448,7 @@ function onWorkerMessage(e) {
       networkReady = true;
       layoutNetwork();
       renderProgressRail();
+      updateActiveExample(0);
       document.getElementById('canvas-placeholder').classList.add('hidden');
       document.getElementById('progress-rail').classList.remove('hidden');
       document.getElementById('controls-bar').classList.remove('hidden');
@@ -485,6 +487,7 @@ function onWorkerMessage(e) {
       // Capture output values for tooltip
       var doneOutputLayer = netLayers[netLayers.length - 1];
       exampleOutputs[d.exampleId] = doneOutputLayer.map(function(n){ return n.output; });
+      updateActiveExample(d.nextExampleId);
       break;
 
     case 'epoch_done':
@@ -518,6 +521,7 @@ function onWorkerMessage(e) {
       isBusy = false;
       isDone = true;
       clearAllActiveColors();
+      updateActiveExample(-1);
       setRunBtn('Restart', false);
       document.getElementById('training-status').textContent =
         d.converged ? 'Converged' : 'Did not converge';
@@ -782,20 +786,27 @@ function drawFrame() {
       ctx.fillText(node.name, pos.x, pos.y - NODE_R - 6);
       ctx.restore();
 
-      // Value below node: threshold for hidden/output, current output for input
-      var sublabel = null;
-      if (node.type === 'input') {
+      // Input value: displayed to the LEFT of node, matching the output label style
+      if (node.type === 'input' && node.output !== undefined) {
         var v = node.output;
-        sublabel = (v !== undefined) ? (Math.round(v) === v ? String(Math.round(v)) : v.toFixed(3)) : '';
-      } else if (node.thres !== null && node.thres !== undefined) {
-        sublabel = 'b=' + node.thres.toFixed(3);
+        var inputVal = Math.round(v) === v ? String(Math.round(v)) : v.toFixed(3);
+        ctx.save();
+        ctx.font = 'bold 14px sans-serif';
+        ctx.fillStyle = '#1a1a2e';
+        ctx.textAlign = 'right';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(inputVal, pos.x - NODE_R - 10, pos.y);
+        ctx.restore();
       }
-      if (sublabel !== null) {
+
+      // Bias label below node (hidden/output only)
+      if (node.type !== 'input' && node.thres !== null && node.thres !== undefined) {
         ctx.save();
         ctx.font = '10px sans-serif';
         ctx.fillStyle = '#888';
         ctx.textAlign = 'center';
-        ctx.fillText(sublabel, pos.x, pos.y + NODE_R + 14);
+        ctx.textBaseline = 'alphabetic';
+        ctx.fillText('b=' + node.thres.toFixed(3), pos.x, pos.y + NODE_R + 14);
         ctx.restore();
       }
 
@@ -970,6 +981,17 @@ function updateProgressRailItem(i) {
   if (fill) fill.style.width = exampleProgress[i].toFixed(1) + '%';
 }
 
+function updateActiveExample(id) {
+  activeExampleId = id;
+  document.querySelectorAll('.progress-item').forEach(function(el){
+    el.classList.remove('active-example');
+  });
+  if (id >= 0) {
+    var el = document.getElementById('prog-item-' + id);
+    if (el) el.classList.add('active-example');
+  }
+}
+
 function showProgressTooltip(exId, el) {
   var outputs = exampleOutputs[exId];
   if (!outputs) return;
@@ -1053,6 +1075,7 @@ function hideTooltip() {
 var TOUR_STEPS = [
   {
     targetType: 'input',
+    placement: 'right',
     getText: function(){ return (
       '<strong>Input nodes</strong> (colored circles) receive the raw data. ' +
       'Each training example gets its own color — look for the matching color in the progress panel on the right.'
@@ -1060,15 +1083,17 @@ var TOUR_STEPS = [
   },
   {
     targetType: 'hidden',
+    placement: 'right',
     getText: function(){ return (
       '<strong>Hidden nodes</strong> compute a weighted sum of their inputs plus a bias, ' +
-      'then pass the result through a sigmoid function. ' +
+      'then compress the result into a value between 0 and 1. ' +
       'A node glows <span style="color:#27ae60;font-weight:600">green</span> during the forward pass and ' +
       '<span style="color:#cc2200;font-weight:600">red</span> during backpropagation.'
     ); }
   },
   {
     targetType: 'output',
+    placement: 'left',
     getText: function(){ return (
       '<strong>Output nodes</strong> show the network\'s current prediction (white number inside the node). ' +
       'After training, click any example in the progress panel to run a prediction and see the output update.'
@@ -1140,7 +1165,7 @@ function showTourStep(i) {
     }
     if (found) {
       pulseNode = { id: found.id, start: performance.now() };
-      positionBubbleNearNode(found.id, bubble);
+      positionBubbleNearNode(found.id, bubble, step.placement);
     }
   } else if (step.targetId) {
     pulseNode = null;
@@ -1148,21 +1173,24 @@ function showTourStep(i) {
   }
 }
 
-function positionBubbleNearNode(nodeId, bubble) {
-  bubble.style.transform = '';  // clear any stale centering transform
+function positionBubbleNearNode(nodeId, bubble, placement) {
+  bubble.style.transform = '';
   var pos = nodePositions[nodeId];
   if (!pos || !canvas) { positionBubbleDefault(bubble); return; }
   var rect = canvas.getBoundingClientRect();
   var bw = 280, bh = 150;
-  var cx = rect.left + pos.x;
-  var cy = rect.top  + pos.y;
-  // Pick whichever side has more room
-  var spaceRight = window.innerWidth - (cx + NODE_R + 20);
-  var spaceLeft  = cx - NODE_R - 20;
-  var left = spaceLeft >= spaceRight
-    ? cx - bw - NODE_R - 20   // more room on the left
-    : cx + NODE_R + 20;        // more room on the right
-  // Clamp to viewport
+  var gap = 24;  // px between node edge and bubble edge, same for all steps
+  var scaleX = canvas.width / rect.width;
+  var scaleY = canvas.height / rect.height;
+  var cx = rect.left + pos.x / scaleX;
+  var cy = rect.top  + pos.y / scaleY;
+
+  var goLeft = (placement === 'left') ||
+               (placement !== 'right' && (cx - NODE_R - gap) >= (window.innerWidth - cx - NODE_R - gap - bw));
+
+  var left = goLeft
+    ? cx - NODE_R - gap - bw
+    : cx + NODE_R + gap;
   left = Math.max(10, Math.min(left, window.innerWidth - bw - 10));
   var top = cy - bh / 2;
   if (top < 60) top = 60;
