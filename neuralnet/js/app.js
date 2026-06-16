@@ -201,6 +201,9 @@ var netEdges     = {};   // keyed by edge id → {id, source, target, weight, fl
 var exampleColors    = [];
 var exampleProgress  = [];  // 0–100
 var exampleBaseError = [];
+var exampleOutputs   = [];  // exampleOutputs[i] = array of output values, or null
+var currentTolerance = 0.1;
+var lastPredictedExample = -1;
 
 // Canvas rendering
 var canvas, ctx;
@@ -392,6 +395,7 @@ function buildNetwork() {
   isBusy = false; isDone = false; networkReady = false;
   netLayers = []; netEdges = {}; nodePositions = {};
   exampleColors = []; exampleProgress = []; exampleBaseError = [];
+  exampleOutputs = []; lastPredictedExample = -1;
   flashEdges = {}; hoveredNodeId = null; pulseNode = null;
   if (scopeColorTimeout) { clearTimeout(scopeColorTimeout); scopeColorTimeout = null; }
   recentlyActivated = {}; scopeLayerIdx = null; epochFlashStart = null;
@@ -409,6 +413,8 @@ function buildNetwork() {
   var hiddenLayerCount = Array.from(
     document.querySelectorAll('#nodes-per-layer select')
   ).map(function(s){ return parseInt(s.value, 10); });
+
+  currentTolerance = parseFloat(document.getElementById('cfg-tol').value) || 0.1;
 
   // Assign random distinct colors to each training example
   var dataset = getTrainingDataset();
@@ -476,6 +482,9 @@ function onWorkerMessage(e) {
       }
       // Update progress for the completed example
       updateExampleProgress(d.exampleId);
+      // Capture output values for tooltip
+      var doneOutputLayer = netLayers[netLayers.length - 1];
+      exampleOutputs[d.exampleId] = doneOutputLayer.map(function(n){ return n.output; });
       break;
 
     case 'epoch_done':
@@ -516,6 +525,10 @@ function onWorkerMessage(e) {
 
     case 'prediction_done':
       isBusy = false;
+      if (lastPredictedExample >= 0) {
+        var predOutputLayer = netLayers[netLayers.length - 1];
+        exampleOutputs[lastPredictedExample] = predOutputLayer.map(function(n){ return n.output; });
+      }
       break;
   }
 }
@@ -933,6 +946,7 @@ function renderProgressRail() {
     div.style.cursor = 'pointer';
     div.addEventListener('click', (function(idx){ return function(){
       if (!isDone || !worker) return;
+      lastPredictedExample = idx;
       var inputs = getTrainingDataset()[idx][0];
       // Highlight input nodes with this example's color
       netLayers[0].forEach(function(n, ni){
@@ -942,6 +956,11 @@ function renderProgressRail() {
       worker.postMessage({ op: 'predict', inputs: inputs });
     }; })(i));
 
+    div.addEventListener('mouseenter', (function(idx){ return function(e){
+      showProgressTooltip(idx, e.currentTarget);
+    }; })(i));
+    div.addEventListener('mouseleave', hideTooltip);
+
     list.appendChild(div);
   });
 }
@@ -949,6 +968,37 @@ function renderProgressRail() {
 function updateProgressRailItem(i) {
   var fill = document.getElementById('prog-fill-' + i);
   if (fill) fill.style.width = exampleProgress[i].toFixed(1) + '%';
+}
+
+function showProgressTooltip(exId, el) {
+  var outputs = exampleOutputs[exId];
+  if (!outputs) return;
+  var dataset = getTrainingDataset();
+  var targets = dataset[exId][1];
+  var tt = document.getElementById('node-tooltip');
+  var lines = [];
+  for (var i = 0; i < outputs.length; i++) {
+    var out = outputs[i];
+    var tgt = targets[i];
+    var within = Math.abs(out - tgt) <= currentTolerance;
+    lines.push(
+      'Output: <strong>' + out.toFixed(3) + '</strong>' +
+      ' &rarr; Target: <strong>' + tgt + '</strong>' +
+      '&nbsp;&nbsp;' + (within
+        ? '<span style="color:#27ae60">&#10003; within tolerance</span>'
+        : '<span style="color:#cc2200">&#10007; still learning</span>')
+    );
+  }
+  tt.innerHTML = lines.join('<br>');
+  tt.style.display = 'block';
+  var rect = el.getBoundingClientRect();
+  var ttW = 230;
+  var left = rect.left - ttW - 8;
+  if (left < 4) left = rect.right + 8;
+  var top = rect.top + rect.height / 2 - 20;
+  if (top < 60) top = 60;
+  tt.style.left = left + 'px';
+  tt.style.top  = top + 'px';
 }
 
 // ═══════════════════════════════════════════════════════════════════
