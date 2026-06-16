@@ -161,6 +161,12 @@ No special steps. The entire `neuralnet/` directory ships as-is — no data file
 
 **Build shows raw random weights.** No epoch runs automatically on build — the network displays its initial random state immediately. This is intentional: seeing the randomized starting weights before training begins is pedagogically useful.
 
+**Tour bubble positioning requires a canvas scale correction.** `layoutNetwork()` runs before the progress rail becomes visible, so `canvas.width` is set to the full viewport width. After the rail appears, the canvas CSS width shrinks but `canvas.width` does not update. `nodePositions` are therefore in a wider coordinate system than the rendered canvas. Converting to viewport pixels requires dividing by `scaleX = canvas.width / rect.width` — the same factor used in the mouse event handler.
+
+**Progress rail tooltip is suppressed until the first pass over each example.** `exampleOutputs[i]` starts as `undefined` and is only populated by `example_done` (during training) or `prediction_done` (post-training click). Hovering before an example has been trained shows nothing rather than stale initial-state outputs.
+
+**Active example tracking.** `activeExampleId` is set to 0 on build, advances to `d.nextExampleId` on each `example_done`, and is cleared to -1 on `training_done`. The `.active-example` CSS class is toggled on the corresponding progress rail item to show it in bold.
+
 ---
 
 ## Version history
@@ -177,4 +183,15 @@ Initial build. Reskin and extension of drdrsh/interactive-bpann. Core math (nn-w
 
 **Convergence status.** The controls strip shows "Converged" or "Did not converge" when training ends. The worker now emits `converged: true/false` in the `training_done` event.
 
-**Tour bubble fix.** The bubble for the Output nodes step now always places itself on whichever side of the target node has more room, reliably keeping it clear of the output node and its pulse ring.
+**Tour bubble (partial fix).** The bubble for the Output nodes step now picks the roomier side (left vs. right) rather than defaulting right. The underlying coordinate bug (canvas scale mismatch) was not yet discovered and fixed until Version 3.
+
+### Version 3 — June 2026
+**Progress rail hover tooltips.** Hovering any row in the progress rail shows the network's actual output vs. the target for that example, color-coded green (within tolerance) or red (still learning). Outputs are captured at each `example_done` event during training and updated on post-training prediction clicks. The tooltip is suppressed until a row has been trained at least once.
+
+**Input node value prominence.** Input values are now displayed to the left of each input node in bold 14px navy — matching the output side label style — so students can read inputs and outputs at the same visual weight during backprop.
+
+**Active example highlight.** The progress rail row currently being trained is shown in bold dark text. The highlight advances with each `example_done` event and clears when training ends.
+
+**Tour bubble placement fixed.** Each node step now has an explicit `placement: 'right'` (input, hidden) or `placement: 'left'` (output), and a consistent 24px gap is applied on the correct side. Root cause of all prior failures: `layoutNetwork()` runs before the progress rail appears, so `canvas.width` is set to the full viewport width; after the rail appears the canvas CSS width shrinks but the coordinate system does not update. All node-to-viewport conversions now divide `pos.x / scaleX` and `pos.y / scaleY`.
+
+**Tour language.** Hidden node step no longer says "sigmoid function" — replaced with "compresses the result into a value between 0 and 1."
