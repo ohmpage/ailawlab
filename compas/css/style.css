@@ -10,68 +10,67 @@ main {
   background: var(--white);
   border-radius: var(--radius);
   box-shadow: var(--shadow);
-  padding: 1rem 1.5rem;
+  padding: 0.9rem 1.5rem 1rem;
   margin-bottom: 1.25rem;
 }
 
-.threshold-row {
-  display: flex;
-  align-items: center;
-  gap: 2rem;
-  flex-wrap: wrap;
-}
-
-.threshold-label {
+/* Label sits above the slider on its own full-width line,
+   so changing the number never affects the slider's width. */
+.threshold-header {
   font-family: sans-serif;
   font-size: 1rem;
+  margin-bottom: 0.5rem;
   display: flex;
   align-items: center;
   gap: 0.6rem;
-  white-space: nowrap;
+}
+
+/* Fixed-width number so digit changes don't shift surrounding text */
+#thresh-val {
+  display: inline-block;
+  min-width: 1.5ch;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
 }
 
 .threshold-tag {
+  display: inline-block;
   background: var(--navy);
   color: #fff;
   font-size: 0.68rem;
   font-family: sans-serif;
   letter-spacing: 0.04em;
-  padding: 0.2rem 0.55rem;
+  padding: 0.15rem 0.5rem;
   border-radius: 3px;
+  visibility: hidden;
 }
 
-.threshold-tag.hidden { display: none; }
+.threshold-tag.visible { visibility: visible; }
 
-.slider-wrap { flex: 1; min-width: 220px; }
+/* Slider takes the full card width — stable, never competes with label */
+.slider-wrap {
+  display: flex;
+  flex-direction: column;
+}
 
 #threshold-slider {
   width: 100%;
   cursor: pointer;
   accent-color: var(--red);
-  height: 6px;
-}
-
-.slider-foot {
-  display: flex;
-  align-items: center;
-  gap: 0.4rem;
-  margin-top: 0.3rem;
 }
 
 .slider-ticks {
-  flex: 1;
   display: flex;
   justify-content: space-between;
+  /* Align tick labels to slider thumb positions.
+     The thumb travels from its center at 0% to 100% of the track,
+     but the track has ~10px inset from the container edge on each side. */
+  padding: 0 9px;
   font-family: sans-serif;
   font-size: 0.68rem;
   color: var(--muted);
-}
-
-.slider-end {
-  font-family: sans-serif;
-  font-size: 0.68rem;
-  color: var(--muted);
-  white-space: nowrap;
+  margin-top: 2px;
+  user-select: none;
 }
 
 /* ── Two-column matrix layout ────────────────────────────────────────────── */
@@ -108,21 +107,35 @@ main {
   color: var(--muted);
 }
 
-/* ── 3×3 Confusion matrix grid ──────────────────────────────────────────── */
+/* ── 3×3 Confusion matrix grid — classic black-outline style ────────────── */
 /*
-       | Did Reoffend | Did NOT Reoffend
-  HIGH |      TP      |       FP
-  LOW  |      FN      |       TN
+        | Did Reoffend | Did NOT Reoffend
+  HIGH  |      TP      |       FP
+  LOW   |      FN      |       TN
 */
 .matrix-grid {
   display: grid;
-  grid-template-columns: 82px 1fr 1fr;
-  grid-template-rows: auto 1fr 1fr;
-  gap: 5px;
+  grid-template-columns: 80px 1fr 1fr;
+  grid-template-rows: auto auto auto;
+  border: 1.5px solid #1e293b;
+  border-radius: 4px;
+  overflow: hidden;
   margin-bottom: 0.9rem;
 }
 
-.mg-corner { /* top-left spacer */ }
+/* Every cell contributes its right and bottom border */
+.matrix-grid > * {
+  border-right: 1px solid #1e293b;
+  border-bottom: 1px solid #1e293b;
+}
+
+/* Last column: no right border */
+.matrix-grid > :nth-child(3n) { border-right: none; }
+
+/* Last row: no bottom border */
+.matrix-grid > :nth-child(n+7) { border-bottom: none; }
+
+.mg-corner { background: #f8fafc; }
 
 .mg-col-head {
   font-family: sans-serif;
@@ -131,28 +144,28 @@ main {
   text-transform: uppercase;
   letter-spacing: 0.05em;
   text-align: center;
-  padding: 0.4rem 0.5rem;
-  border-radius: 4px;
+  padding: 0.45rem 0.5rem;
   background: #f1f5f9;
-  color: #475569;
+  color: #334155;
 }
 
 .mg-row-head {
   display: flex;
   align-items: center;
-  justify-content: flex-end;
-  padding-right: 6px;
+  justify-content: center;
+  padding: 0.4rem 0.3rem;
+  background: #f8fafc;
 }
 
 .risk-badge {
   font-family: sans-serif;
-  font-size: 0.65rem;
+  font-size: 0.63rem;
   font-weight: bold;
   letter-spacing: 0.06em;
   text-transform: uppercase;
   text-align: center;
-  padding: 0.3rem 0.45rem;
-  border-radius: 4px;
+  padding: 0.25rem 0.4rem;
+  border-radius: 3px;
 }
 
 .risk-badge.high { background: #1e293b; color: #fff; }
@@ -160,21 +173,21 @@ main {
 
 /* ── Confusion matrix cells ──────────────────────────────────────────────── */
 .mg-cell {
-  border-radius: 6px;
+  background: #fff;
   padding: 0.65rem 0.7rem 0.6rem;
   min-height: 108px;
   display: flex;
   flex-direction: column;
-  gap: 0.25rem;
+  gap: 0.2rem;
 }
 
 .cell-type {
   font-family: sans-serif;
-  font-size: 0.6rem;
+  font-size: 0.58rem;
   font-weight: bold;
   text-transform: uppercase;
   letter-spacing: 0.07em;
-  opacity: 0.55;
+  color: #94a3b8;
 }
 
 .cell-n {
@@ -185,45 +198,24 @@ main {
 }
 
 .cell-desc {
-  font-size: 0.72rem;
+  font-size: 0.71rem;
   line-height: 1.4;
-  color: #374151;
+  color: #475569;
   margin-top: auto;
 }
 
-/* True Positive */
-.mg-tp {
-  background: #f0fdf4;
-  border: 1px solid #bbf7d0;
-}
-.mg-tp .cell-n    { color: #15803d; }
-.mg-tp .cell-type { color: #15803d; }
+/* TP and TN: faint green background, dark numbers */
+.mg-tp, .mg-tn { background: #f4fdf6; }
+.mg-tp .cell-n,
+.mg-tn .cell-n { color: #1e293b; }
 
-/* False Positive — primary fairness concern */
-.mg-fp {
-  background: #fff1f2;
-  border: 1px solid #fecdd3;
-  border-left: 4px solid var(--red);
-}
+/* FP: red — the primary fairness concern */
 .mg-fp .cell-n    { color: var(--red); }
 .mg-fp .cell-type { color: var(--red); }
 
-/* False Negative */
-.mg-fn {
-  background: #fffbeb;
-  border: 1px solid #fde68a;
-  border-left: 4px solid #d97706;
-}
-.mg-fn .cell-n    { color: #92400e; }
-.mg-fn .cell-type { color: #92400e; }
-
-/* True Negative */
-.mg-tn {
-  background: #f0fdf4;
-  border: 1px solid #bbf7d0;
-}
-.mg-tn .cell-n    { color: #15803d; }
-.mg-tn .cell-type { color: #15803d; }
+/* FN: amber */
+.mg-fn .cell-n    { color: #b45309; }
+.mg-fn .cell-type { color: #b45309; }
 
 /* ── Stats bar below each matrix ─────────────────────────────────────────── */
 .stats-bar {
@@ -237,11 +229,12 @@ main {
   padding: 0.55rem 0.4rem;
   border-radius: 6px;
   background: #f8fafc;
+  border: 1px solid #e2e8f0;
 }
 
 .stat-value {
   font-family: sans-serif;
-  font-size: 1.25rem;
+  font-size: 1.2rem;
   font-weight: bold;
   line-height: 1;
   margin-bottom: 0.2rem;
@@ -249,7 +242,7 @@ main {
 
 .stat-name {
   font-family: sans-serif;
-  font-size: 0.65rem;
+  font-size: 0.63rem;
   font-weight: bold;
   text-transform: uppercase;
   letter-spacing: 0.05em;
@@ -257,20 +250,11 @@ main {
 }
 
 .stat-desc {
-  font-size: 0.65rem;
+  font-size: 0.63rem;
   color: var(--muted);
   line-height: 1.3;
 }
 
-/* Color-code each stat by which fairness standard it represents */
-.stat.fp-rate { background: #fff1f2; }
 .stat.fp-rate .stat-value { color: var(--red); }
-.stat.fp-rate .stat-name  { color: #9f1239; }
-
-.stat.ppv { background: #eff6ff; }
-.stat.ppv .stat-value { color: var(--blue); }
-.stat.ppv .stat-name  { color: var(--blue); }
-
-.stat.fn-rate { background: #fffbeb; }
-.stat.fn-rate .stat-value { color: #92400e; }
-.stat.fn-rate .stat-name  { color: #92400e; }
+.stat.ppv     .stat-value { color: var(--blue); }
+.stat.fn-rate .stat-value { color: #b45309; }

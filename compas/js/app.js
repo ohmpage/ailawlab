@@ -5,7 +5,7 @@ let threshold = 5;
 
 // ── CSV parsing ──────────────────────────────────────────────────────────────
 function parseCSV(text) {
-  const lines = text.trim().split('\n');
+  const lines = text.trim().split(/\r?\n/);
   const headers = splitCSVLine(lines[0]);
   return lines.slice(1).map(line => {
     const vals = splitCSVLine(line);
@@ -120,9 +120,9 @@ function updateThresholdUI() {
   const labels = { 1: 'everyone flagged', 5: 'Northpointe default', 8: 'High scores only', 10: 'score 10 only' };
   if (labels[threshold]) {
     tag.textContent = labels[threshold];
-    tag.classList.remove('hidden');
+    tag.classList.add('visible');
   } else {
-    tag.classList.add('hidden');
+    tag.classList.remove('visible');
   }
 }
 

@@ -18,21 +18,15 @@
 
   <!-- ── Threshold control ─────────────────────────────────────────────────── -->
   <section class="control-card">
-    <div class="threshold-row">
-      <div class="threshold-label">
-        <span>Scores <strong id="thresh-val">5</strong> and above &rarr; <strong>High Risk</strong></span>
-        <span class="threshold-tag" id="thresh-tag">Northpointe default</span>
-      </div>
-      <div class="slider-wrap">
-        <input type="range" id="threshold-slider" min="1" max="10" value="5">
-        <div class="slider-foot">
-          <span class="slider-end">&larr; flag more</span>
-          <div class="slider-ticks" aria-hidden="true">
-            <span>1</span><span>2</span><span>3</span><span>4</span><span>5</span>
-            <span>6</span><span>7</span><span>8</span><span>9</span><span>10</span>
-          </div>
-          <span class="slider-end">flag fewer &rarr;</span>
-        </div>
+    <div class="threshold-header">
+      High-risk cutoff: scores <strong id="thresh-val">5</strong> and above &rarr; <strong>High Risk</strong>
+      <span class="threshold-tag" id="thresh-tag">Northpointe default</span>
+    </div>
+    <div class="slider-wrap">
+      <input type="range" id="threshold-slider" min="1" max="10" value="5">
+      <div class="slider-ticks" aria-hidden="true">
+        <span>1</span><span>2</span><span>3</span><span>4</span><span>5</span>
+        <span>6</span><span>7</span><span>8</span><span>9</span><span>10</span>
       </div>
     </div>
   </section>
