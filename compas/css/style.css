@@ -1,0 +1,276 @@
+/* ── Layout ──────────────────────────────────────────────────────────────── */
+main {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 1.5rem 1.5rem 3rem;
+}
+
+/* ── Threshold control ───────────────────────────────────────────────────── */
+.control-card {
+  background: var(--white);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 1rem 1.5rem;
+  margin-bottom: 1.25rem;
+}
+
+.threshold-row {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+  flex-wrap: wrap;
+}
+
+.threshold-label {
+  font-family: sans-serif;
+  font-size: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  white-space: nowrap;
+}
+
+.threshold-tag {
+  background: var(--navy);
+  color: #fff;
+  font-size: 0.68rem;
+  font-family: sans-serif;
+  letter-spacing: 0.04em;
+  padding: 0.2rem 0.55rem;
+  border-radius: 3px;
+}
+
+.threshold-tag.hidden { display: none; }
+
+.slider-wrap { flex: 1; min-width: 220px; }
+
+#threshold-slider {
+  width: 100%;
+  cursor: pointer;
+  accent-color: var(--red);
+  height: 6px;
+}
+
+.slider-foot {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin-top: 0.3rem;
+}
+
+.slider-ticks {
+  flex: 1;
+  display: flex;
+  justify-content: space-between;
+  font-family: sans-serif;
+  font-size: 0.68rem;
+  color: var(--muted);
+}
+
+.slider-end {
+  font-family: sans-serif;
+  font-size: 0.68rem;
+  color: var(--muted);
+  white-space: nowrap;
+}
+
+/* ── Two-column matrix layout ────────────────────────────────────────────── */
+.matrices-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.25rem;
+}
+
+@media (max-width: 860px) {
+  .matrices-row { grid-template-columns: 1fr; }
+}
+
+/* ── Matrix card ─────────────────────────────────────────────────────────── */
+.matrix-card {
+  background: var(--white);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 1.25rem 1.25rem 1rem;
+}
+
+.group-header {
+  display: flex;
+  align-items: baseline;
+  gap: 0.6rem;
+  margin-bottom: 1rem;
+}
+
+.group-header h2 { font-size: 1.1rem; }
+
+.group-n {
+  font-family: sans-serif;
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+
+/* ── 3×3 Confusion matrix grid ──────────────────────────────────────────── */
+/*
+       | Did Reoffend | Did NOT Reoffend
+  HIGH |      TP      |       FP
+  LOW  |      FN      |       TN
+*/
+.matrix-grid {
+  display: grid;
+  grid-template-columns: 82px 1fr 1fr;
+  grid-template-rows: auto 1fr 1fr;
+  gap: 5px;
+  margin-bottom: 0.9rem;
+}
+
+.mg-corner { /* top-left spacer */ }
+
+.mg-col-head {
+  font-family: sans-serif;
+  font-size: 0.68rem;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  text-align: center;
+  padding: 0.4rem 0.5rem;
+  border-radius: 4px;
+  background: #f1f5f9;
+  color: #475569;
+}
+
+.mg-row-head {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding-right: 6px;
+}
+
+.risk-badge {
+  font-family: sans-serif;
+  font-size: 0.65rem;
+  font-weight: bold;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  text-align: center;
+  padding: 0.3rem 0.45rem;
+  border-radius: 4px;
+}
+
+.risk-badge.high { background: #1e293b; color: #fff; }
+.risk-badge.low  { background: #e2e8f0; color: #334155; }
+
+/* ── Confusion matrix cells ──────────────────────────────────────────────── */
+.mg-cell {
+  border-radius: 6px;
+  padding: 0.65rem 0.7rem 0.6rem;
+  min-height: 108px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.cell-type {
+  font-family: sans-serif;
+  font-size: 0.6rem;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  opacity: 0.55;
+}
+
+.cell-n {
+  font-family: sans-serif;
+  font-size: 2rem;
+  font-weight: bold;
+  line-height: 1;
+}
+
+.cell-desc {
+  font-size: 0.72rem;
+  line-height: 1.4;
+  color: #374151;
+  margin-top: auto;
+}
+
+/* True Positive */
+.mg-tp {
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+}
+.mg-tp .cell-n    { color: #15803d; }
+.mg-tp .cell-type { color: #15803d; }
+
+/* False Positive — primary fairness concern */
+.mg-fp {
+  background: #fff1f2;
+  border: 1px solid #fecdd3;
+  border-left: 4px solid var(--red);
+}
+.mg-fp .cell-n    { color: var(--red); }
+.mg-fp .cell-type { color: var(--red); }
+
+/* False Negative */
+.mg-fn {
+  background: #fffbeb;
+  border: 1px solid #fde68a;
+  border-left: 4px solid #d97706;
+}
+.mg-fn .cell-n    { color: #92400e; }
+.mg-fn .cell-type { color: #92400e; }
+
+/* True Negative */
+.mg-tn {
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+}
+.mg-tn .cell-n    { color: #15803d; }
+.mg-tn .cell-type { color: #15803d; }
+
+/* ── Stats bar below each matrix ─────────────────────────────────────────── */
+.stats-bar {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 5px;
+}
+
+.stat {
+  text-align: center;
+  padding: 0.55rem 0.4rem;
+  border-radius: 6px;
+  background: #f8fafc;
+}
+
+.stat-value {
+  font-family: sans-serif;
+  font-size: 1.25rem;
+  font-weight: bold;
+  line-height: 1;
+  margin-bottom: 0.2rem;
+}
+
+.stat-name {
+  font-family: sans-serif;
+  font-size: 0.65rem;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 0.15rem;
+}
+
+.stat-desc {
+  font-size: 0.65rem;
+  color: var(--muted);
+  line-height: 1.3;
+}
+
+/* Color-code each stat by which fairness standard it represents */
+.stat.fp-rate { background: #fff1f2; }
+.stat.fp-rate .stat-value { color: var(--red); }
+.stat.fp-rate .stat-name  { color: #9f1239; }
+
+.stat.ppv { background: #eff6ff; }
+.stat.ppv .stat-value { color: var(--blue); }
+.stat.ppv .stat-name  { color: var(--blue); }
+
+.stat.fn-rate { background: #fffbeb; }
+.stat.fn-rate .stat-value { color: #92400e; }
+.stat.fn-rate .stat-name  { color: #92400e; }

@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>COMPAS Risk Score Explorer — AI Law</title>
+  <link rel="stylesheet" href="../shared/css/base.css">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<header>
+  <h1><span>COMPAS</span> Risk Score Explorer</h1>
+  <p class="byline">by <a href="https://www.paulohm.com/">Paul Ohm</a></p>
+</header>
+
+<main>
+
+  <!-- ── Threshold control ─────────────────────────────────────────────────── -->
+  <section class="control-card">
+    <div class="threshold-row">
+      <div class="threshold-label">
+        <span>Scores <strong id="thresh-val">5</strong> and above &rarr; <strong>High Risk</strong></span>
+        <span class="threshold-tag" id="thresh-tag">Northpointe default</span>
+      </div>
+      <div class="slider-wrap">
+        <input type="range" id="threshold-slider" min="1" max="10" value="5">
+        <div class="slider-foot">
+          <span class="slider-end">&larr; flag more</span>
+          <div class="slider-ticks" aria-hidden="true">
+            <span>1</span><span>2</span><span>3</span><span>4</span><span>5</span>
+            <span>6</span><span>7</span><span>8</span><span>9</span><span>10</span>
+          </div>
+          <span class="slider-end">flag fewer &rarr;</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Two confusion matrices ─────────────────────────────────────────────── -->
+  <div class="matrices-row">
+
+    <div class="matrix-card">
+      <div class="group-header">
+        <h2>Black defendants</h2>
+        <span class="group-n" id="n-black">loading…</span>
+      </div>
+      <div class="matrix-grid" id="grid-black"></div>
+      <div class="stats-bar" id="stats-black"></div>
+    </div>
+
+    <div class="matrix-card">
+      <div class="group-header">
+        <h2>White defendants</h2>
+        <span class="group-n" id="n-white">loading…</span>
+      </div>
+      <div class="matrix-grid" id="grid-white"></div>
+      <div class="stats-bar" id="stats-white"></div>
+    </div>
+
+  </div>
+
+</main>
+
+<script src="js/app.js"></script>
+</body>
+</html>
