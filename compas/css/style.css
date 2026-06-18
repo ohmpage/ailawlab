@@ -59,19 +59,37 @@ main {
   accent-color: var(--red);
 }
 
+/* Ticks are absolutely positioned so each is centered on the exact
+   theoretical thumb-center position, regardless of label width.
+   Formula: left = --tr + i/9 * (100% - 2*--tr)
+   --tr is half the browser's slider thumb width (macOS ~10-11px). */
+:root { --tr: 10px; }
+
 .slider-ticks {
-  display: flex;
-  justify-content: space-between;
-  /* Align tick labels to slider thumb positions.
-     The thumb travels from its center at 0% to 100% of the track,
-     but the track has ~10px inset from the container edge on each side. */
-  padding: 0 9px;
+  position: relative;
+  height: 1.2em;
+  margin-top: 3px;
+  user-select: none;
+}
+
+.slider-ticks span {
+  position: absolute;
+  transform: translateX(-50%);
   font-family: sans-serif;
   font-size: 0.68rem;
   color: var(--muted);
-  margin-top: 2px;
-  user-select: none;
 }
+
+.slider-ticks span:nth-child(1)  { left: var(--tr); }
+.slider-ticks span:nth-child(2)  { left: calc(var(--tr) + 1*(100% - 2*var(--tr))/9); }
+.slider-ticks span:nth-child(3)  { left: calc(var(--tr) + 2*(100% - 2*var(--tr))/9); }
+.slider-ticks span:nth-child(4)  { left: calc(var(--tr) + 3*(100% - 2*var(--tr))/9); }
+.slider-ticks span:nth-child(5)  { left: calc(var(--tr) + 4*(100% - 2*var(--tr))/9); }
+.slider-ticks span:nth-child(6)  { left: calc(var(--tr) + 5*(100% - 2*var(--tr))/9); }
+.slider-ticks span:nth-child(7)  { left: calc(var(--tr) + 6*(100% - 2*var(--tr))/9); }
+.slider-ticks span:nth-child(8)  { left: calc(var(--tr) + 7*(100% - 2*var(--tr))/9); }
+.slider-ticks span:nth-child(9)  { left: calc(var(--tr) + 8*(100% - 2*var(--tr))/9); }
+.slider-ticks span:nth-child(10) { left: calc(100% - var(--tr)); }
 
 /* ── Two-column matrix layout ────────────────────────────────────────────── */
 .matrices-row {
