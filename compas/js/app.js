@@ -1,5 +1,96 @@
 'use strict';
 
+// ── Explainer slides ─────────────────────────────────────────────────────────
+const SLIDES = [
+  {
+    title: 'An algorithm assigns risk scores',
+    body:  'COMPAS scores defendants from 1 to 10. Courts use these scores — often without ' +
+           'revealing them to the defendant — to help decide bail, sentencing, and parole. ' +
+           'By default, scores of <strong>5 and above</strong> are labeled <strong>High Risk</strong>.',
+    viz: `<div class="sv-scale">
+      <div class="sv-scale-track">
+        <div class="sv-scale-low"><span class="sv-scale-label">Low Risk</span><span class="sv-scale-nums">1 – 4</span></div>
+        <div class="sv-scale-divider">5 ▲<div class="sv-scale-note">Northpointe<br>default</div></div>
+        <div class="sv-scale-high"><span class="sv-scale-label">High Risk</span><span class="sv-scale-nums">5 – 10</span></div>
+      </div>
+    </div>`,
+  },
+  {
+    title: 'Every prediction lands in one of four cells',
+    body:  'A High Risk label can be correct (the defendant reoffends) or wrong (they don\'t). ' +
+           'The same two possibilities apply to Low Risk labels. ' +
+           'These four groups form a <strong>confusion matrix</strong> — the core of the dashboard.',
+    viz: `<div class="sv-matrix">
+      <div class="sv-m-corner"></div>
+      <div class="sv-m-head">Did Reoffend</div><div class="sv-m-head">Did NOT Reoffend</div>
+      <div class="sv-m-row-head">High Risk</div>
+      <div class="sv-m-cell sv-tp"><strong>True Positive</strong><br><small>Correctly flagged</small></div>
+      <div class="sv-m-cell sv-fp"><strong>False Positive</strong><br><small>Wrongly flagged — labeled dangerous but wouldn't have reoffended</small></div>
+      <div class="sv-m-row-head">Low Risk</div>
+      <div class="sv-m-cell sv-fn"><strong>False Negative</strong><br><small>Missed — cleared but did go on to reoffend</small></div>
+      <div class="sv-m-cell sv-tn"><strong>True Negative</strong><br><small>Correctly cleared</small></div>
+    </div>`,
+  },
+  {
+    title: 'ProPublica and Northpointe both told the truth',
+    body:  'In 2016 ProPublica showed Black defendants face nearly <strong>twice the false alarm rate</strong> ' +
+           'as white defendants. Northpointe replied that scores <strong>mean the same thing for both groups</strong>. ' +
+           'Both claims were accurate — because they measure two entirely different things.',
+    viz: `<div class="sv-stats">
+      <div class="sv-stat-box sv-red">
+        <div class="sv-stat-label">False Alarm Rate</div>
+        <div class="sv-stat-sub">Of defendants who would <em>not</em> reoffend, what fraction were scored High Risk?</div>
+        <div class="sv-stat-nums"><span>Black: ~45%</span><span>White: ~24%</span></div>
+      </div>
+      <div class="sv-stat-box sv-blue">
+        <div class="sv-stat-label">Score Accuracy</div>
+        <div class="sv-stat-sub">Of defendants scored High Risk, what fraction actually reoffended?</div>
+        <div class="sv-stat-nums"><span>Black: ~63%</span><span>White: ~59%</span></div>
+      </div>
+    </div>`,
+  },
+  {
+    title: 'When base rates differ, you can\'t satisfy both standards at once',
+    body:  'In the Broward County data, Black defendants reoffended at a higher rate than white defendants. ' +
+           'When two groups have different underlying rates and the algorithm is calibrated, ' +
+           '<strong>equal false alarm rates are mathematically impossible</strong>. ' +
+           'Move the threshold slider and wave the Magic Wand to see what it would take to change that.',
+    viz: `<div class="sv-bars">
+      <div class="sv-bar-row">
+        <span class="sv-bar-label">Black defendants</span>
+        <div class="sv-bar-track"><div class="sv-bar-fill sv-bar-a" style="width:51%"></div></div>
+        <span class="sv-bar-pct">~51%</span>
+      </div>
+      <div class="sv-bar-row">
+        <span class="sv-bar-label">White defendants</span>
+        <div class="sv-bar-track"><div class="sv-bar-fill sv-bar-b" style="width:39%"></div></div>
+        <span class="sv-bar-pct">~39%</span>
+      </div>
+      <div class="sv-bar-caption">Actual two-year reoffense rate — Broward County, FL, 2013–2014</div>
+    </div>`,
+  },
+];
+
+let slideIndex = 0;
+
+function renderSlide() {
+  const s = SLIDES[slideIndex];
+  document.getElementById('slide-title').textContent = s.title;
+  document.getElementById('slide-body').innerHTML   = s.body;
+  document.getElementById('slide-viz').innerHTML    = s.viz;
+  document.querySelectorAll('#explainer .dot').forEach((d, i) => {
+    d.classList.toggle('active', i === slideIndex);
+  });
+  document.getElementById('btn-prev').style.visibility = slideIndex === 0 ? 'hidden' : '';
+  document.getElementById('btn-next').textContent =
+    slideIndex === SLIDES.length - 1 ? 'Start exploring →' : 'Next →';
+}
+
+function showMainApp() {
+  document.getElementById('explainer').classList.add('hidden');
+  document.getElementById('main-app').classList.remove('hidden');
+}
+
 let rows = [];
 let threshold     = 5;
 let activeStat    = null;
@@ -389,6 +480,17 @@ document.getElementById('accuracy-slider').addEventListener('input', e => {
   updateAccuracyLabel();
   render();
 });
+
+// ── Explainer navigation ─────────────────────────────────────────────────────
+renderSlide();
+document.getElementById('btn-next').addEventListener('click', () => {
+  if (slideIndex < SLIDES.length - 1) { slideIndex++; renderSlide(); }
+  else showMainApp();
+});
+document.getElementById('btn-prev').addEventListener('click', () => {
+  if (slideIndex > 0) { slideIndex--; renderSlide(); }
+});
+document.getElementById('btn-skip').addEventListener('click', showMainApp);
 
 // ── Boot ─────────────────────────────────────────────────────────────────────
 fetch('data/compas-scores-two-years.csv')

@@ -653,3 +653,198 @@ main.wand-mode .group-header h2::after {
   font-weight: normal;
   opacity: 0.75;
 }
+
+/* ── Explainer section ───────────────────────────────────────────────────── */
+#explainer {
+  display: flex;
+  justify-content: center;
+  padding: 2rem 1.5rem 1rem;
+}
+#explainer.hidden { display: none; }
+
+#main-app.hidden { display: none; }
+
+.slide-card {
+  background: var(--white);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 2rem 2.5rem 1.75rem;
+  max-width: 680px;
+  width: 100%;
+  position: relative;
+}
+
+.skip-btn {
+  position: absolute;
+  top: 1rem; right: 1.25rem;
+  background: none;
+  border: 1px solid #e2e8f0;
+  border-radius: 4px;
+  font-size: 0.78rem;
+  font-family: sans-serif;
+  color: var(--muted);
+  padding: 3px 8px;
+  cursor: pointer;
+}
+.skip-btn:hover { background: #f1f5f9; color: var(--navy); }
+
+.slide-card h2 {
+  font-size: 1.4rem;
+  color: var(--navy);
+  margin-bottom: 0.6rem;
+  padding-right: 5rem;
+}
+.slide-card > p {
+  font-size: 0.95rem;
+  line-height: 1.7;
+  color: #334155;
+  margin-bottom: 0;
+}
+
+#slide-viz { margin: 1.25rem 0 0.25rem; }
+
+.slide-nav {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-top: 1.25rem;
+  padding-top: 1rem;
+  border-top: 1px solid #e2e8f0;
+}
+.slide-nav button {
+  background: var(--navy);
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  padding: 0.45rem 1.1rem;
+  font-size: 0.9rem;
+  font-family: sans-serif;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.slide-nav button:hover { background: var(--blue); }
+.slide-nav #btn-prev {
+  background: #f7f6f3;
+  color: var(--navy);
+  border: 1px solid #e2e8f0;
+}
+.slide-nav #btn-prev:hover { background: #eee; }
+
+.dots { display: flex; gap: 6px; margin-left: auto; }
+.dot { width: 8px; height: 8px; border-radius: 50%; background: #e2e8f0; transition: background 0.2s; }
+.dot.active { background: var(--navy); }
+
+/* ── Slide visualizations ────────────────────────────────────────────────── */
+
+/* Slide 1 — score scale */
+.sv-scale-track {
+  display: flex;
+  border: 1.5px solid #1e293b;
+  border-radius: 6px;
+  overflow: hidden;
+  font-family: sans-serif;
+  height: 76px;
+}
+.sv-scale-low, .sv-scale-high {
+  flex: 4;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+}
+.sv-scale-low  { background: #f1f5f9; }
+.sv-scale-high { background: #1e293b; color: #fff; }
+.sv-scale-label { font-size: 0.65rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.07em; }
+.sv-scale-nums  { font-size: 1.05rem; font-weight: 600; }
+.sv-scale-divider {
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  padding: 0 0.5rem; background: var(--red); color: #fff;
+  font-size: 0.7rem; font-weight: 700; text-align: center; gap: 3px; min-width: 60px;
+}
+.sv-scale-note { font-size: 0.55rem; font-weight: 400; opacity: 0.9; line-height: 1.2; }
+
+/* Slide 2 — mini confusion matrix */
+.sv-matrix {
+  display: grid;
+  grid-template-columns: 72px 1fr 1fr;
+  border: 1.5px solid #1e293b;
+  border-radius: 4px;
+  overflow: hidden;
+  font-family: sans-serif;
+  font-size: 0.75rem;
+}
+.sv-matrix > * { border-right: 1px solid #1e293b; border-bottom: 1px solid #1e293b; }
+.sv-matrix > :nth-child(3n)  { border-right: none; }
+.sv-matrix > :nth-child(n+7) { border-bottom: none; }
+.sv-m-corner { background: #f8fafc; }
+.sv-m-head {
+  background: #f1f5f9; text-align: center; padding: 0.3rem 0.4rem;
+  font-size: 0.62rem; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 0.04em; color: #334155;
+}
+.sv-m-row-head {
+  display: flex; align-items: center; justify-content: center;
+  padding: 0.3rem; background: #f8fafc;
+  font-size: 0.65rem; font-weight: 700; color: #334155; text-align: center;
+}
+.sv-m-cell { padding: 0.45rem 0.6rem; line-height: 1.35; }
+.sv-tp, .sv-tn { background: #f4fdf6; }
+.sv-fp { color: var(--red); }
+.sv-fn { color: #b45309; }
+
+/* Slide 3 — two stats */
+.sv-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; }
+.sv-stat-box {
+  border-radius: 6px;
+  padding: 0.7rem 0.85rem;
+  font-family: sans-serif;
+}
+.sv-stat-box.sv-red  { background: rgba(233,69,96,0.06);  border-left: 3px solid var(--red); }
+.sv-stat-box.sv-blue { background: rgba(15,52,96,0.06);   border-left: 3px solid var(--blue); }
+.sv-stat-label {
+  font-size: 0.68rem; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.25rem;
+}
+.sv-red  .sv-stat-label { color: var(--red); }
+.sv-blue .sv-stat-label { color: var(--blue); }
+.sv-stat-sub  { font-size: 0.7rem; color: #475569; line-height: 1.35; margin-bottom: 0.4rem; }
+.sv-stat-nums { display: flex; flex-direction: column; gap: 1px; font-size: 0.8rem; font-weight: 600; color: #1e293b; }
+
+/* Slide 4 — base rate bars */
+.sv-bars { font-family: sans-serif; padding: 0.25rem 0; }
+.sv-bar-row { display: flex; align-items: center; gap: 0.65rem; margin-bottom: 0.55rem; }
+.sv-bar-label { font-size: 0.75rem; min-width: 140px; color: #334155; }
+.sv-bar-track { flex: 1; height: 22px; background: #e2e8f0; border-radius: 3px; overflow: hidden; }
+.sv-bar-fill  { height: 100%; border-radius: 3px; }
+.sv-bar-a     { background: var(--red); }
+.sv-bar-b     { background: var(--blue); }
+.sv-bar-pct   { font-size: 0.75rem; font-weight: 600; min-width: 36px; color: #1e293b; }
+.sv-bar-caption { font-size: 0.65rem; color: var(--muted); font-style: italic; margin-top: 0.4rem; }
+
+/* ── Foundational research footer ────────────────────────────────────────── */
+.papers-section {
+  background: var(--navy);
+  color: #ccc;
+  padding: 2rem 2rem 2.5rem;
+  margin-top: 3rem;
+}
+.papers-section h3 { color: #fff; font-size: 1rem; margin-bottom: 1rem; }
+.papers-grid {
+  max-width: 1280px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 0.75rem;
+}
+.paper-link {
+  background: rgba(255,255,255,0.07);
+  border-radius: 5px;
+  padding: 0.6rem 0.9rem;
+  font-size: 0.8rem;
+  font-family: sans-serif;
+  line-height: 1.4;
+}
+.paper-link a { color: #7ecfff; text-decoration: none; }
+.paper-link a:hover { text-decoration: underline; }
+.paper-link .venue { color: #999; font-style: italic; }

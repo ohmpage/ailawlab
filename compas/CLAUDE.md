@@ -173,3 +173,26 @@ Data is in `compas/data/`:
 - `compas-scores-two-years.csv` — Primary dataset (7,214 defendants; verified against ProPublica's published numbers)
 - `compas-scores-two-years-violent.csv` — Violent recidivism subset (4,743 defendants)
 - `compas-scores-raw.csv` — Raw pre-filter data (60,843 rows; multiple assessments per person)
+
+---
+
+## Version History
+
+### Version 1 — June 2026
+Initial build. Side-by-side confusion matrices for Black and White defendants driven by a universal threshold slider (1–10). Three stats below each matrix (False Alarm Rate, Score Accuracy / PPV, Miss Rate) are clickable — clicking opens a synchronized explainer popup on both panels showing a mini fraction diagram and the formula definition. Cell and stat colors: FP red, FN amber, TP/TN green. Real COMPAS data throughout; no synthetic computation.
+
+### Version 2 — June 2026
+
+**Magic Wand mode** — a mode switch that transforms the page into a hypothetical playground. Three labeled interventions let students explore counterfactuals no algorithm can actually deliver:
+
+- *Intervention 1 — Race-specific high-risk cutoff*: Separate threshold sliders for Black and White defendants (the Sandra Mayson proposal). Shows that the only mechanical fix for FP disparity requires explicit racial classification — constitutionally precarious under Equal Protection strict scrutiny.
+- *Intervention 2 — Underlying reoffense rate*: Base rate sliders (5–75%) for each group. Uses a calibration-preserving synthetic model: derives per-group sensitivity (α) and PPV (q) from the real CSV at the current threshold, then scales them toward perfection by the accuracy slider and applies the counterfactual base rate. Shows that equalizing base rates gets FP rates *closer* but doesn't fully converge — model bias persists.
+- *Intervention 3 — Model accuracy*: A single slider from Current (COMPAS) to Perfect. At perfect accuracy + equal base rates, FP rates converge to zero. The full lesson: you need *both* structural equality *and* an unbiased algorithm — neither alone is sufficient (the Chouldechova theorem made kinetic).
+
+Visual treatment: vivid violet (`#7c3aed`) with a slow pulsing glow animation on matrix cards; deep purple-indigo gradient banner; "🪄 MAGIC WAND" as glowing text label (not a button). "Defaults" button resets all wand sliders to real-data starting values. Real-mode threshold slider position is preserved across wand entry/exit.
+
+**Four-slide explainer** — appears before the dashboard on first load; skippable at any time. Slides cover: (1) how COMPAS works and the Northpointe default threshold, (2) the four confusion matrix cells in human-centered language, (3) the ProPublica vs. Northpointe dispute with real numbers from the data, (4) the base rate difference that makes the impossibility theorem concrete. Dashboard data loads in parallel so it's ready by the time students reach the demo.
+
+**Foundational research footer** — navy card grid matching the wordvectors tool's style. Seven papers: both ProPublica pieces (Machine Bias + methodology), Flores/Bechtel/Lowenkamp rejoinder, Chouldechova, Kleinberg-Mullainathan-Raghavan, Mayson, and Hellman. All URLs sourced from the research notes in `compas/research/`.
+
+**Root landing page** — COMPAS card added to `ailawlab/index.html`.

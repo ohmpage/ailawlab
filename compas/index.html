@@ -14,7 +14,28 @@
   <p class="byline">by <a href="https://www.paulohm.com/">Paul Ohm</a></p>
 </header>
 
-<main>
+<!-- ── Explainer (4 slides) ────────────────────────────────────────────────── -->
+<section id="explainer">
+  <div class="slide-card">
+    <button id="btn-skip" class="skip-btn">Skip to dashboard &rarr;</button>
+    <h2 id="slide-title"></h2>
+    <p  id="slide-body"></p>
+    <div id="slide-viz"></div>
+    <nav class="slide-nav">
+      <button id="btn-prev">&#8592; Back</button>
+      <button id="btn-next">Next &#8594;</button>
+      <div class="dots">
+        <div class="dot"></div>
+        <div class="dot"></div>
+        <div class="dot"></div>
+        <div class="dot"></div>
+      </div>
+    </nav>
+  </div>
+</section>
+
+<!-- ── Main dashboard (hidden until explainer done) ─────────────────────────── -->
+<main id="main-app" class="hidden">
 
   <!-- ── Threshold control ─────────────────────────────────────────────────── -->
   <section class="control-card" id="control-card">
@@ -143,6 +164,55 @@
   <div class="stat-explainer hidden" id="stat-explainer"></div>
 
 </main>
+
+<!-- ── Foundational research ─────────────────────────────────────────────────── -->
+<footer class="papers-section">
+  <div class="papers-grid">
+    <h3>Foundational research</h3>
+    <div class="paper-link">
+      <a href="https://www.propublica.org/article/machine-bias-risk-assessments-in-criminal-sentencing" target="_blank">
+        Machine Bias
+      </a><br>
+      <span class="venue">Angwin, Larson, Mattu &amp; Kirchner — ProPublica, 2016</span>
+    </div>
+    <div class="paper-link">
+      <a href="https://www.propublica.org/article/how-we-analyzed-the-compas-recidivism-algorithm" target="_blank">
+        How We Analyzed the COMPAS Recidivism Algorithm
+      </a><br>
+      <span class="venue">Larson, Mattu, Kirchner &amp; Angwin — ProPublica, 2016</span>
+    </div>
+    <div class="paper-link">
+      <a href="https://www.crj.org/publication/false-positives-false-negatives-false-analyses-rejoinder/" target="_blank">
+        False Positives, False Negatives, and False Analyses
+      </a><br>
+      <span class="venue">Flores, Bechtel &amp; Lowenkamp — <em>Federal Probation</em>, 2016</span>
+    </div>
+    <div class="paper-link">
+      <a href="https://arxiv.org/abs/1703.00056" target="_blank">
+        Fair Prediction with Disparate Impact
+      </a><br>
+      <span class="venue">Chouldechova — <em>Big Data</em>, 2017</span>
+    </div>
+    <div class="paper-link">
+      <a href="https://arxiv.org/abs/1609.05807" target="_blank">
+        Inherent Trade-Offs in the Fair Determination of Risk Scores
+      </a><br>
+      <span class="venue">Kleinberg, Mullainathan &amp; Raghavan — ITCS, 2017</span>
+    </div>
+    <div class="paper-link">
+      <a href="https://yalelawjournal.org/pdf/Mayson_p5g2tz2m.pdf" target="_blank">
+        Bias In, Bias Out
+      </a><br>
+      <span class="venue">Mayson — 128 <em>Yale L.J.</em> 2218 (2019)</span>
+    </div>
+    <div class="paper-link">
+      <a href="https://virginialawreview.org/wp-content/uploads/2020/06/Hellman_Book.pdf" target="_blank">
+        Measuring Algorithmic Fairness
+      </a><br>
+      <span class="venue">Hellman — 106 <em>Va. L. Rev.</em> 811 (2020)</span>
+    </div>
+  </div>
+</footer>
 
 <script src="js/app.js"></script>
 </body>
