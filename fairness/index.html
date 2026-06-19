@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fairness Definitions — AI Law</title>
+  <link rel="stylesheet" href="../shared/css/base.css">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<header id="site-header"></header>
+<script>window.APP_HEADER = { h1: '<span>Fairness</span> Definitions' };</script>
+<script src="../shared/js/header.js"></script>
+
+<main>
+
+  <p class="page-hint">
+    Click or drag any cell from either confusion matrix into the workspace below to build a fairness metric.
+    When you assemble a known metric, the app will name it and explain its significance.
+  </p>
+
+  <!-- ── Confusion matrices ────────────────────────────────────────────────── -->
+  <div class="matrices-row">
+    <div class="matrix-card">
+      <div class="group-header">
+        <h2 class="group-name"></h2>
+      </div>
+      <div class="matrix-wrap"></div>
+      <div class="live-result" data-group="0"></div>
+    </div>
+    <div class="matrix-card">
+      <div class="group-header">
+        <h2 class="group-name"></h2>
+      </div>
+      <div class="matrix-wrap"></div>
+      <div class="live-result" data-group="1"></div>
+    </div>
+  </div>
+
+  <!-- ── Ratio workspace ──────────────────────────────────────────────────── -->
+  <div class="workspace-card">
+    <div class="workspace-heading">Ratio Workspace</div>
+    <div class="workspace-zones">
+      <div class="zone-wrapper" data-zone="num">
+        <div class="zone-label">Numerator</div>
+        <div class="zone num-zone" id="num-zone"></div>
+      </div>
+      <div class="workspace-divider"></div>
+      <div class="zone-wrapper" data-zone="den">
+        <div class="zone-label">Denominator</div>
+        <div class="zone den-zone" id="den-zone"></div>
+      </div>
+    </div>
+    <div class="metric-info" id="metric-info"></div>
+    <div class="workspace-actions">
+      <button id="btn-clear" type="button">Clear</button>
+      <button id="btn-remember" type="button" disabled>Remember ▸</button>
+    </div>
+  </div>
+
+  <!-- ── Saved metrics table ──────────────────────────────────────────────── -->
+  <div class="saved-section" id="saved-section" style="display:none">
+    <h2>Saved Metrics</h2>
+    <table class="saved-table">
+      <thead>
+        <tr>
+          <th>Metric</th>
+          <th>Formula</th>
+          <th>Black Defendants</th>
+          <th>White Defendants</th>
+          <th>Difference</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody id="saved-tbody"></tbody>
+    </table>
+  </div>
+
+</main>
+
+<!-- ── Foundational research ──────────────────────────────────────────────── -->
+<footer class="papers-section">
+  <div class="papers-grid">
+    <h3>Foundational research</h3>
+    <div class="paper-link">
+      <a href="https://en.wikipedia.org/wiki/Confusion_matrix" target="_blank">Confusion Matrix</a><br>
+      <span class="venue">Wikipedia — Table of Confusion metrics</span>
+    </div>
+    <div class="paper-link">
+      <a href="https://facctconference.org/static/tutorials/narayanan-21defs18.pdf" target="_blank">21 Definitions of Fairness and Their Politics</a><br>
+      <span class="venue">Narayanan — FAccT Tutorial, 2018</span>
+    </div>
+    <div class="paper-link">
+      <a href="https://arxiv.org/abs/1703.00056" target="_blank">Fair Prediction with Disparate Impact</a><br>
+      <span class="venue">Chouldechova — <em>Big Data</em>, 2017</span>
+    </div>
+    <div class="paper-link">
+      <a href="https://arxiv.org/abs/1609.05807" target="_blank">Inherent Trade-Offs in the Fair Determination of Risk Scores</a><br>
+      <span class="venue">Kleinberg, Mullainathan &amp; Raghavan — ITCS, 2017</span>
+    </div>
+    <div class="paper-link">
+      <a href="https://arxiv.org/abs/1610.02413" target="_blank">Equality of Opportunity in Supervised Learning</a><br>
+      <span class="venue">Hardt, Price &amp; Srebro — NeurIPS, 2016</span>
+    </div>
+    <div class="paper-link">
+      <a href="https://www.propublica.org/article/machine-bias-risk-assessments-in-criminal-sentencing" target="_blank">Machine Bias</a><br>
+      <span class="venue">Angwin, Larson, Mattu &amp; Kirchner — ProPublica, 2016</span>
+    </div>
+  </div>
+</footer>
+
+<script src="js/app.js"></script>
+</body>
+</html>

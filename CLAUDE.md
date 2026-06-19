@@ -26,6 +26,14 @@ Each tool lives in its own subdirectory with its own `index.html`, `css/style.cs
 
 ---
 
+## Standing design principles
+
+**Use real data.** Prefer real-world datasets over synthetic examples. Whenever possible, anchor interactive elements to data drawn from actual litigation, research, or published investigations. Fabricated numbers should be clearly labeled as hypothetical.
+
+**Self-discovery over slideshow.** Design for open-ended exploration rather than a predetermined sequence of stops. Visual hierarchy, layered reveals, and interactive controls should guide students — not lock them into a fixed tour. Allow students to wander down unintended alleyways. Richness over simplicity.
+
+---
+
 ## Design system
 
 **No build step. No npm. No TypeScript.** Plain HTML + CSS + vanilla JS. Deliberate choice for long-term maintainability.
@@ -88,3 +96,6 @@ Neural Network Trainer added in `neuralnet/`. No dependencies — plain HTML + C
 
 ### Suite Version 3 — June 2026
 COMPAS Risk Score Explorer added in `compas/`. Shared header infrastructure introduced: `shared/js/header.js` injects a consistent `Tutorial | All Apps` nav into all three tools. Header layout standardized: app title and "by Paul Ohm" byline on the left, navigation on the right. Each tool exposes `window.restartTutorial()` so the Tutorial link returns to the four-slide explainer from anywhere in the app. Wordvectors "Vibe Coded" byline removed. Neuralnet hamburger and "Take a tour" link moved from header into the controls bar (visible only after a network is built).
+
+### Suite Version 4 — June 2026
+Fairness Definitions Explorer added in `fairness/`. Companion to the COMPAS app: students build fairness metrics by dragging or clicking cells from two augmented confusion matrices into a ratio workspace. When a known metric is assembled, the app names it and explains its significance. A "Remember" button saves metrics to a comparison table. No threshold slider — data is fixed at COMPAS threshold=5. Metric definitions live in `fairness/data/metrics.json`, a maintainer-editable JSON file. Suite-wide design principles codified in this file: real data over synthetic; self-discovery over slideshow.

@@ -1,0 +1,86 @@
+{
+  "_schema_version": 1,
+  "_notes": "Edit this file to add, modify, or remove recognized fairness metrics. Each entry defines a ratio that the app will recognize and annotate when a user assembles it in the workspace. Cell codes for numerator/denominator: tp (True Positives), fp (False Positives), fn (False Negatives), tn (True Negatives), p (TP+FN, actual positives), n (FP+TN, actual negatives), pp (TP+FP, predicted positives), pn (TN+FN, predicted negatives), all (TP+FP+FN+TN, total). List order does not matter — matching is by set of codes, not order.",
+  "metrics": [
+    {
+      "id": "tpr",
+      "names": ["True Positive Rate", "Recall", "Sensitivity", "Hit Rate", "Power"],
+      "numerator": ["tp"],
+      "denominator": ["p"],
+      "commentary": "Of defendants who actually reoffended, what fraction were scored High Risk? This is also called Equal Opportunity (Hardt et al. 2016): requiring equal TPR across groups ensures that people who actually have the relevant characteristic are treated equally. In the COMPAS data, Black defendants have a substantially higher TPR than White defendants — the algorithm identifies a larger share of Black recidivists as high risk.",
+      "sources": ["Wikipedia: True Positive Rate", "Hardt, Price & Srebro 2016 (Equal Opportunity)"]
+    },
+    {
+      "id": "fnr",
+      "names": ["False Negative Rate", "Miss Rate", "Type II Error Rate"],
+      "numerator": ["fn"],
+      "denominator": ["p"],
+      "commentary": "Of defendants who actually reoffended, what fraction were scored Low Risk and may have been released early? A high miss rate means dangerous individuals go unsupervised. In COMPAS, White defendants have a much higher false negative rate — meaning the algorithm misses a larger share of White recidivists. This is the mirror image of the false positive disparity ProPublica highlighted.",
+      "sources": ["Wikipedia: False Negative Rate"]
+    },
+    {
+      "id": "fpr",
+      "names": ["False Positive Rate", "Fall-out", "Type I Error Rate", "False Alarm Rate"],
+      "numerator": ["fp"],
+      "denominator": ["n"],
+      "commentary": "Of defendants who did NOT reoffend, what fraction were scored High Risk anyway? This is ProPublica's central finding: Black defendants in the COMPAS dataset had a False Positive Rate of about 45%, compared to 24% for White defendants — nearly double. These are real people who would not have reoffended but were labeled high-risk. Chouldechova (2017) proved that when base rates differ and the algorithm is calibrated, the FPR disparity is mathematically unavoidable.",
+      "sources": ["Wikipedia: False Positive Rate", "Angwin et al. 2016 (Machine Bias)", "Chouldechova 2017"]
+    },
+    {
+      "id": "tnr",
+      "names": ["True Negative Rate", "Specificity", "Selectivity"],
+      "numerator": ["tn"],
+      "denominator": ["n"],
+      "commentary": "Of defendants who did not reoffend, what fraction were correctly scored Low Risk? The complement of the False Positive Rate: TNR = 1 − FPR. White defendants benefit from a much higher true negative rate — roughly 77% compared to 55% for Black defendants. This means the Low Risk label is more reliable as a signal of actual low risk for White defendants.",
+      "sources": ["Wikipedia: True Negative Rate"]
+    },
+    {
+      "id": "ppv",
+      "names": ["Positive Predictive Value", "Precision", "Predictive Parity (criterion)"],
+      "numerator": ["tp"],
+      "denominator": ["pp"],
+      "commentary": "Of defendants scored High Risk, what fraction actually reoffended? This is Northpointe's standard — 'predictive parity' or 'calibration within groups': a High Risk score should mean the same thing regardless of race. Northpointe demonstrated COMPAS satisfies this approximately. Chouldechova (2017) proved that when base rates differ, you cannot simultaneously have equal PPV and equal FPR — this is the mathematical core of the ProPublica vs. Northpointe dispute.",
+      "sources": ["Wikipedia: Positive Predictive Value", "Northpointe/Dieterich 2016", "Chouldechova 2017"]
+    },
+    {
+      "id": "fdr",
+      "names": ["False Discovery Rate"],
+      "numerator": ["fp"],
+      "denominator": ["pp"],
+      "commentary": "Of defendants scored High Risk, what fraction were false alarms — people who would not have reoffended? The complement of PPV: FDR = 1 − PPV. When FDR is high, the High Risk label is often wrong. Since COMPAS has approximately equal PPV across groups, it also has approximately equal FDR — roughly 37% of Black High Risk scores and 41% of White High Risk scores were false alarms.",
+      "sources": ["Wikipedia: False Discovery Rate"]
+    },
+    {
+      "id": "npv",
+      "names": ["Negative Predictive Value", "NPV"],
+      "numerator": ["tn"],
+      "denominator": ["pn"],
+      "commentary": "Of defendants scored Low Risk, what fraction actually did not reoffend? The mirror of PPV — how reliable is a Low Risk score? Narayanan (2018) lists equal NPV across groups as a distinct fairness criterion. In COMPAS, NPV is higher for White defendants (71%) than Black defendants (65%), meaning a Low Risk label is somewhat more reliable for White defendants.",
+      "sources": ["Wikipedia: Negative Predictive Value", "Narayanan 2018 (21 Definitions)"]
+    },
+    {
+      "id": "for",
+      "names": ["False Omission Rate", "FOR"],
+      "numerator": ["fn"],
+      "denominator": ["pn"],
+      "commentary": "Of defendants scored Low Risk, what fraction actually did reoffend? The complement of NPV: FOR = 1 − NPV. A high false omission rate means the Low Risk label is dangerously unreliable. In COMPAS, Black defendants have a slightly higher false omission rate (35%) than White defendants (29%), though this disparity is smaller than the false positive rate disparity.",
+      "sources": ["Wikipedia: False Omission Rate"]
+    },
+    {
+      "id": "acc",
+      "names": ["Accuracy", "Overall Accuracy"],
+      "numerator": ["tp", "tn"],
+      "denominator": ["all"],
+      "commentary": "What fraction of all defendants were correctly classified — either correctly flagged or correctly cleared? Overall accuracy is the most familiar metric but can be deeply misleading when groups have different base rates. 'Accuracy Equity' — requiring equal accuracy across groups — is the weakest fairness criterion in Narayanan's taxonomy. It allows large within-cell disparities to cancel out, masking substantial unfairness.",
+      "sources": ["Wikipedia: Accuracy", "Narayanan 2018 (Accuracy Equity)"]
+    },
+    {
+      "id": "prev",
+      "names": ["Prevalence", "Base Rate", "Prior Probability"],
+      "numerator": ["p"],
+      "denominator": ["all"],
+      "commentary": "What fraction of all defendants in this group actually reoffended? This is the underlying recidivism rate — the base rate. Chouldechova (2017) proved that when this rate differs between groups, a well-calibrated algorithm cannot simultaneously equalize FPR and FNR. In COMPAS, the Black base rate (~51%) is substantially higher than the White base rate (~39%). This difference is the mathematical root of the fairness impossibility.",
+      "sources": ["Wikipedia: Prevalence", "Chouldechova 2017"]
+    }
+  ]
+}
