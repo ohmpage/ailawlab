@@ -16,7 +16,7 @@
 <!-- ── Explainer (4 slides) ────────────────────────────────────────────────── -->
 <section id="explainer">
   <div class="slide-card">
-    <button class="skip-btn" id="btn-skip">Skip →</button>
+    <button class="skip-btn" id="btn-skip">Skip to dashboard &rarr;</button>
     <h2 id="slide-title"></h2>
     <p  id="slide-body"></p>
     <div id="slide-viz"></div>
@@ -40,6 +40,17 @@
     Click or drag any cell from either confusion matrix into the workspace below to build a fairness metric.
     When you assemble a known metric, the app will name it and explain its significance.
   </p>
+
+  <!-- ── Dataset selector ─────────────────────────────────────────────────── -->
+  <div class="dataset-selector">
+    <span class="dataset-selector-label">Dataset:</span>
+    <div class="dataset-btns">
+      <button class="dataset-btn active" data-index="0">COMPAS — Race</button>
+      <button class="dataset-btn"        data-index="1">COMPAS — Gender</button>
+      <button class="dataset-btn"        data-index="2">Gender Shades</button>
+      <button class="dataset-btn"        data-index="3">Emily &amp; Greg</button>
+    </div>
+  </div>
 
   <!-- ── Confusion matrices ────────────────────────────────────────────────── -->
   <div class="matrices-row">
@@ -91,8 +102,8 @@
         <tr>
           <th>Metric</th>
           <th>Formula</th>
-          <th>Black Defendants</th>
-          <th>White Defendants</th>
+          <th id="th-group0">Black Defendants</th>
+          <th id="th-group1">White Defendants</th>
           <th>Difference</th>
           <th></th>
         </tr>

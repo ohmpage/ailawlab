@@ -99,3 +99,6 @@ COMPAS Risk Score Explorer added in `compas/`. Shared header infrastructure intr
 
 ### Suite Version 4 — June 2026
 Fairness Definitions Explorer added in `fairness/`. Companion to the COMPAS app: students build fairness metrics by dragging or clicking cells from two augmented confusion matrices into a ratio workspace. When a known metric is assembled, the app names it and explains its significance. A "Remember" button saves metrics to a comparison table. No threshold slider — data is fixed at COMPAS threshold=5. Metric definitions live in `fairness/data/metrics.json`, a maintainer-editable JSON file. Suite-wide design principles codified in this file: real data over synthetic; self-discovery over slideshow.
+
+### Suite Version 5 — June 2026
+Fairness Explorer improvements. Four-slide tutorial carousel, Print / Export button, and a dataset switcher with four real-world datasets selectable via pill buttons: COMPAS by Race (default), COMPAS by Gender (same CSV, different split), Gender Shades (IBM Watson — Buolamwini & Gebru FAccT 2018), and Emily & Greg (Bertrand & Mullainathan AER 2004 résumé audit). Each dataset brings its own row/column labels, cell descriptions, and row badge styles. Metric commentary notes when COMPAS-specific text applies to a non-COMPAS dataset. Print export adapts to the active dataset.

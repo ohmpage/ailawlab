@@ -108,19 +108,94 @@ window.restartTutorial = function () {
   document.getElementById('explainer').classList.remove('hidden');
 };
 
-// ── Dataset ──────────────────────────────────────────────────────────────────
-// Pre-computed from compas/data/compas-scores-two-years.csv at threshold=5
-// using the same filter as compas/js/app.js (score_text !== 'N/A').
-const DATASET = {
-  label: 'COMPAS (Broward County, FL)',
-  source: 'ProPublica COMPAS dataset (2013–2014), threshold = 5',
-  groups: [
-    { name: 'Black Defendants', tp: 1369, fp: 805,  fn: 532,  tn: 990  },
-    { name: 'White Defendants', tp: 505,  fp: 349,  fn: 461,  tn: 1139 }
-  ],
-  rowLabels: ['Scored High Risk', 'Scored Low Risk'],
-  colLabels: ['Did Reoffend', 'Did NOT Reoffend']
-};
+// ── Datasets ──────────────────────────────────────────────────────────────────
+// All numbers pre-verified or cited from primary sources. See CLAUDE.md.
+const DATASETS = [
+  {
+    id: 'compas-race',
+    label: 'COMPAS — Race',
+    source: 'ProPublica COMPAS dataset (Broward County, FL, 2013–2014), threshold = 5',
+    groups: [
+      { name: 'Black Defendants', tp: 1369, fp: 805,  fn: 532,  tn: 990  },
+      { name: 'White Defendants', tp: 505,  fp: 349,  fn: 461,  tn: 1139 }
+    ],
+    rowLabels: ['Scored High Risk', 'Scored Low Risk'],
+    colLabels:  ['Did Reoffend', 'Did NOT Reoffend'],
+    rowBadges:  ['high', 'low'],
+    cellDescs: {
+      tp: 'correctly scored High Risk',   fp: 'incorrectly scored High Risk',
+      fn: 'incorrectly scored Low Risk',  tn: 'correctly scored Low Risk',
+      p:  'all who reoffended',           n:  'all who did not reoffend',
+      pp: 'all scored High Risk',         pn: 'all scored Low Risk',
+      all: 'all defendants'
+    }
+  },
+  {
+    id: 'compas-gender',
+    label: 'COMPAS — Gender',
+    source: 'ProPublica COMPAS dataset (Broward County, FL, 2013–2014), threshold = 5',
+    groups: [
+      { name: 'Female Defendants', tp: 303,  fp: 288,  fn: 195,  tn: 609  },
+      { name: 'Male Defendants',   tp: 1732, fp: 994,  fn: 1021, tn: 2072 }
+    ],
+    rowLabels: ['Scored High Risk', 'Scored Low Risk'],
+    colLabels:  ['Did Reoffend', 'Did NOT Reoffend'],
+    rowBadges:  ['high', 'low'],
+    cellDescs: {
+      tp: 'correctly scored High Risk',   fp: 'incorrectly scored High Risk',
+      fn: 'incorrectly scored Low Risk',  tn: 'correctly scored Low Risk',
+      p:  'all who reoffended',           n:  'all who did not reoffend',
+      pp: 'all scored High Risk',         pn: 'all scored Low Risk',
+      all: 'all defendants'
+    }
+  },
+  {
+    id: 'gender-shades',
+    label: 'Gender Shades',
+    source: 'Buolamwini & Gebru, FAccT 2018 — IBM Watson Visual Recognition on PPB dataset (n=1,270)',
+    groups: [
+      // LM n=340, LF n=340. IBM error rates: LM=0.3%, LF=7.1% (Tbl 1).
+      // LM: FN=round(340×.003)=1, TP=339; LF: FP=round(340×.071)=24, TN=316
+      { name: 'Lighter-Skinned', tp: 339, fp: 24,  fn: 1,  tn: 316 },
+      // DM n=295, DF n=295. IBM error rates: DM=12.0%, DF=34.7% (Tbl 1).
+      // DM: FN=round(295×.12)=35, TP=260; DF: FP=round(295×.347)=102, TN=193
+      { name: 'Darker-Skinned',  tp: 260, fp: 102, fn: 35, tn: 193 }
+    ],
+    rowLabels: ['Classified Male', 'Classified Female'],
+    colLabels:  ['Is Male', 'Is Female'],
+    rowBadges:  ['pos', 'neg'],
+    cellDescs: {
+      tp: 'male correctly classified',      fp: 'female wrongly classified Male',
+      fn: 'male wrongly classified Female', tn: 'female correctly classified',
+      p:  'all male subjects',              n:  'all female subjects',
+      pp: 'all classified Male',            pn: 'all classified Female',
+      all: 'all subjects'
+    }
+  },
+  {
+    id: 'emily-greg',
+    label: 'Emily & Greg',
+    source: 'Bertrand & Mullainathan, AER 2004 — résumé audit study (n=4,870)',
+    groups: [
+      // White: 1218 high-quality × 10.79% = 131 callbacks (TP); 1217 low × 8.50% = 103 (FP)
+      { name: 'White-Named',  tp: 131, fp: 103, fn: 1087, tn: 1114 },
+      // Black: 1218 high × 6.70% = 82 callbacks (TP); 1217 low × 6.19% = 75 (FP)
+      { name: 'Black-Named',  tp: 82,  fp: 75,  fn: 1136, tn: 1142 }
+    ],
+    rowLabels: ['Got Callback', 'No Callback'],
+    colLabels:  ['High-Quality Résumé', 'Lower-Quality Résumé'],
+    rowBadges:  ['pos', 'neg'],
+    cellDescs: {
+      tp: 'high-quality résumé, got callback',   fp: 'lower-quality résumé, got callback',
+      fn: 'high-quality résumé, no callback',    tn: 'lower-quality résumé, no callback',
+      p:  'all high-quality résumés',            n:  'all lower-quality résumés',
+      pp: 'all who got callbacks',               pn: 'all who got no callback',
+      all: 'all résumés'
+    }
+  }
+];
+
+let currentDataset = DATASETS[0];
 
 // ── Helpers ──────────────────────────────────────────────────────────────────
 function derived(g) {
@@ -230,13 +305,14 @@ function recognize() {
 }
 
 // ── Matrix HTML ───────────────────────────────────────────────────────────────
-// Layout mirrors compas: rows = predicted score, cols = actual outcome
-//         | Did Reoffend | Did NOT Reoffend | Total
-//  HIGH   |      TP      |       FP         |  PP
-//  LOW    |      FN      |       TN         |  PN
-//  Total  |       P      |        N         |   n
+// Layout: rows = predicted label, cols = actual outcome.
+// Uses currentDataset.rowLabels / colLabels / rowBadges / cellDescs.
 function buildMatrixHTML(group) {
   const v = derived(group);
+  const [rowPos, rowNeg] = currentDataset.rowLabels;
+  const [colPos, colNeg] = currentDataset.colLabels;
+  const [bPos,   bNeg]   = currentDataset.rowBadges;
+  const d = currentDataset.cellDescs;
 
   function cell(code, cls, desc) {
     return `<div class="mat-cell ${cls}" data-code="${code}" draggable="true">
@@ -248,24 +324,24 @@ function buildMatrixHTML(group) {
 
   return `<div class="matrix-grid">
     <div class="mat-corner"></div>
-    <div class="mat-colhead">Did Reoffend</div>
-    <div class="mat-colhead">Did NOT Reoffend</div>
+    <div class="mat-colhead">${colPos}</div>
+    <div class="mat-colhead">${colNeg}</div>
     <div class="mat-total-label">Total</div>
 
-    <div class="mat-rowhead"><span class="risk-badge high">High Risk</span></div>
-    ${cell('tp', 'mat-tp',                 'correctly scored High Risk')}
-    ${cell('fp', 'mat-fp',                 'incorrectly scored High Risk')}
-    ${cell('pp', 'mat-marginal mat-pp',    'all scored High Risk')}
+    <div class="mat-rowhead"><span class="risk-badge ${bPos}">${rowPos}</span></div>
+    ${cell('tp', 'mat-tp',              d.tp)}
+    ${cell('fp', 'mat-fp',             d.fp)}
+    ${cell('pp', 'mat-marginal mat-pp', d.pp)}
 
-    <div class="mat-rowhead"><span class="risk-badge low">Low Risk</span></div>
-    ${cell('fn', 'mat-fn',                 'incorrectly scored Low Risk')}
-    ${cell('tn', 'mat-tn',                 'correctly scored Low Risk')}
-    ${cell('pn', 'mat-marginal mat-pn',    'all scored Low Risk')}
+    <div class="mat-rowhead"><span class="risk-badge ${bNeg}">${rowNeg}</span></div>
+    ${cell('fn', 'mat-fn',              d.fn)}
+    ${cell('tn', 'mat-tn',              d.tn)}
+    ${cell('pn', 'mat-marginal mat-pn', d.pn)}
 
     <div class="mat-total-label">Total</div>
-    ${cell('p',   'mat-marginal mat-p',    'all who reoffended')}
-    ${cell('n',   'mat-marginal mat-n',    'all who did not reoffend')}
-    ${cell('all', 'mat-marginal mat-all',  'all defendants')}
+    ${cell('p',   'mat-marginal mat-p',   d.p)}
+    ${cell('n',   'mat-marginal mat-n',   d.n)}
+    ${cell('all', 'mat-marginal mat-all', d.all)}
   </div>`;
 }
 
@@ -279,7 +355,7 @@ function updateCellHighlights() {
 }
 
 function renderResults() {
-  DATASET.groups.forEach((group, i) => {
+  currentDataset.groups.forEach((group, i) => {
     const el  = document.querySelector(`.live-result[data-group="${i}"]`);
     const has = numCodes.length && denCodes.length;
     if (!has) {
@@ -322,9 +398,13 @@ function renderWorkspace() {
 
   if (metric) {
     const synonyms = metric.names.slice(1).join(', ');
+    const compasNote = !currentDataset.id.startsWith('compas')
+      ? `<p class="metric-sources"><em>Note:</em> The commentary below is based on COMPAS defendant data.</p>`
+      : '';
     info.innerHTML = `<div class="metric-found">
       <div class="metric-primary-name">${metric.names[0]}</div>
       ${synonyms ? `<div class="metric-synonyms">Also known as: ${synonyms}</div>` : ''}
+      ${compasNote}
       <p class="metric-commentary">${metric.commentary}</p>
       ${metric.sources?.length ? `<p class="metric-sources"><em>Sources:</em> ${metric.sources.join(' · ')}</p>` : ''}
     </div>`;
@@ -355,7 +435,7 @@ function renderSavedTable() {
 }
 
 function printMetrics() {
-  const [g0, g1] = DATASET.groups;
+  const [g0, g1] = currentDataset.groups;
   const rows = savedRows.map(row => {
     const [v0, v1] = row.values;
     const delta = v0 !== null && v1 !== null ? Math.abs(v0 - v1) : null;
@@ -371,11 +451,30 @@ function printMetrics() {
 
   const date = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
 
+  const footerNote = currentDataset.id.startsWith('compas')
+    ? `<p class="note">
+        Chouldechova (2017): when two groups have different underlying reoffense rates and the algorithm is calibrated,
+        no classifier can simultaneously equalize False Positive Rate, False Negative Rate, and Positive Predictive Value.
+        ${currentDataset.id === 'compas-race'
+          ? 'Black and White defendants in this dataset have base rates of approximately 51% and 39%, respectively.'
+          : 'Female and Male defendants in this dataset have base rates of approximately 33% and 50%, respectively.'}
+      </p>`
+    : currentDataset.id === 'emily-greg'
+    ? `<p class="note">
+        Because résumé quality was randomized 50/50 across both groups, the base rates are equal by design.
+        Chouldechova&apos;s impossibility theorem does not apply. Any gap in callback rate between groups is direct evidence of
+        disparate treatment: employers treated identical credentials differently based on the applicant&apos;s perceived race.
+      </p>`
+    : `<p class="note">
+        The PPB dataset is balanced: roughly equal lighter- and darker-skinned subjects, and roughly equal male and female
+        within each skin-tone category. All error rate differences reflect classifier behavior, not dataset composition.
+      </p>`;
+
   const html = `<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Fairness Metrics — COMPAS</title>
+<title>Fairness Metrics — ${currentDataset.label}</title>
 <style>
   body { font-family: Georgia, serif; font-size: 13px; color: #1e293b; margin: 2cm 2.5cm; }
   h1 { font-size: 1.3rem; margin: 0 0 0.15rem; }
@@ -396,10 +495,9 @@ function printMetrics() {
 <p class="sub">AI Law Casebook — Fairness Definitions Explorer</p>
 
 <div class="dataset">
-  <strong>Dataset:</strong> ProPublica COMPAS dataset, Broward County, FL, 2013–2014 &nbsp;·&nbsp; Score threshold = 5<br>
+  <strong>Dataset:</strong> ${currentDataset.source}<br>
   <strong>${g0.name}:</strong> n = ${fmt(g0.tp + g0.fp + g0.fn + g0.tn)} &nbsp;·&nbsp;
   <strong>${g1.name}:</strong> n = ${fmt(g1.tp + g1.fp + g1.fn + g1.tn)}<br>
-  Each metric is a ratio from the confusion matrix showing how COMPAS classified defendants.
   Values above 5% difference are highlighted in red.
 </div>
 
@@ -416,13 +514,9 @@ function printMetrics() {
   <tbody>${rows}</tbody>
 </table>
 
-<p class="note">
-  Chouldechova (2017): when two groups have different underlying reoffense rates and the algorithm is calibrated,
-  no classifier can simultaneously equalize False Positive Rate, False Negative Rate, and Positive Predictive Value.
-  Black and White defendants in this dataset have base rates of approximately 51% and 39%, respectively.
-</p>
+${footerNote}
 
-<p class="footer">Generated ${date} &nbsp;·&nbsp; ${DATASET.source}</p>
+<p class="footer">Generated ${date} &nbsp;·&nbsp; ${currentDataset.source}</p>
 </body>
 </html>`;
 
@@ -431,6 +525,25 @@ function printMetrics() {
   w.document.close();
   w.focus();
   w.print();
+}
+
+function switchDataset(i) {
+  currentDataset = DATASETS[i];
+  numCodes = []; denCodes = []; savedRows = [];
+
+  document.querySelectorAll('.matrix-card').forEach((card, gi) => {
+    card.querySelector('.group-name').textContent = currentDataset.groups[gi].name;
+    card.querySelector('.matrix-wrap').innerHTML  = buildMatrixHTML(currentDataset.groups[gi]);
+  });
+
+  document.getElementById('th-group0').textContent = currentDataset.groups[0].name;
+  document.getElementById('th-group1').textContent = currentDataset.groups[1].name;
+
+  document.querySelectorAll('.dataset-btn').forEach((btn, bi) => {
+    btn.classList.toggle('active', bi === i);
+  });
+
+  render();
 }
 
 function render() {
@@ -466,13 +579,17 @@ document.addEventListener('click', e => {
     render(); return;
   }
 
+  // Dataset selector
+  const dsBtn = e.target.closest('.dataset-btn');
+  if (dsBtn) { switchDataset(+dsBtn.dataset.index); return; }
+
   // Remember button
   if (e.target.id === 'btn-remember') {
     const metric = recognize();
     savedRows.push({
       name:    metric ? metric.names[0] : 'Custom ratio',
       formula: formulaStr(numCodes, denCodes),
-      values:  DATASET.groups.map(g => computeRatio(g, numCodes, denCodes))
+      values:  currentDataset.groups.map(g => computeRatio(g, numCodes, denCodes))
     });
     render(); return;
   }
@@ -589,11 +706,13 @@ document.getElementById('btn-skip').addEventListener('click', showMainApp);
 
 renderSlide();
 
-// Inject matrix HTML into each .matrix-card
+// Inject matrix HTML and initialize saved-table column headers
 document.querySelectorAll('.matrix-card').forEach((card, i) => {
-  card.querySelector('.group-name').textContent = DATASET.groups[i].name;
-  card.querySelector('.matrix-wrap').innerHTML  = buildMatrixHTML(DATASET.groups[i]);
+  card.querySelector('.group-name').textContent = currentDataset.groups[i].name;
+  card.querySelector('.matrix-wrap').innerHTML  = buildMatrixHTML(currentDataset.groups[i]);
 });
+document.getElementById('th-group0').textContent = currentDataset.groups[0].name;
+document.getElementById('th-group1').textContent = currentDataset.groups[1].name;
 
 // Wire up drop zones
 setupDropZone(document.getElementById('num-zone'), 'num');

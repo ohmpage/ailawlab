@@ -6,9 +6,9 @@ Tool for the AI Law Casebook suite. Companion to the COMPAS app.
 
 ## What This Tool Does
 
-A ratio-builder: students assemble fairness metrics by dragging or clicking cells from two confusion matrices (Black defendants, White defendants — real COMPAS data) into a workspace. When a recognized metric is assembled, the app names it and explains its significance. Students can save metrics to a comparison table.
+A ratio-builder: students assemble fairness metrics by dragging or clicking cells from two confusion matrices into a workspace. When a recognized metric is assembled, the app names it and explains its significance. Students can save metrics to a comparison table and switch between four real-world datasets.
 
-Pedagogical goal: show that 20+ distinct fairness metrics exist, all derived from the same 2×2 confusion matrix; that different metrics give different answers about the same algorithm; and that the impossibility theorem explains why they must diverge.
+Pedagogical goal: show that 20+ distinct fairness metrics exist, all derived from the same 2×2 confusion matrix; that different metrics give different answers about the same algorithm; and that the impossibility theorem explains why they must diverge — across criminal justice, face recognition, and hiring.
 
 ---
 
@@ -32,17 +32,37 @@ Rows = predicted score (High Risk / Low Risk), columns = actual outcome (Did Reo
 
 ---
 
-## Hardcoded Data (COMPAS, threshold=5)
+## Datasets
 
-Values verified from `compas/data/compas-scores-two-years.csv` using the same filter as `compas/js/app.js`.
+Four datasets live in the `DATASETS` array at the top of `app.js`; `let currentDataset = DATASETS[0]` is the active one. `switchDataset(i)` resets state and re-renders.
 
-**Black defendants (n=3,696):**
-- TP=1,369 FP=805 FN=532 TN=990
-- P=1,901  N=1,795  PP=2,174  PN=1,522  n=3,696
+### Dataset 1 — COMPAS (Race) [default]
+Pre-computed from `compas/data/compas-scores-two-years.csv` at threshold=5, same filter as `compas/js/app.js`.
+- Black defendants: TP=1,369 FP=805 FN=532 TN=990 (n=3,696)
+- White defendants: TP=505 FP=349 FN=461 TN=1,139 (n=2,454)
 
-**White defendants (n=2,454):**
-- TP=505  FP=349  FN=461  TN=1,139
-- P=966   N=1,488  PP=854   PN=1,600  n=2,454
+### Dataset 2 — COMPAS (Gender)
+Same CSV and filter as Dataset 1, split on `sex` field.
+- Female defendants: TP=303 FP=288 FN=195 TN=609 (n=1,395)
+- Male defendants:   TP=1,732 FP=994 FN=1,021 TN=2,072 (n=5,819)
+- Pedagogical note: FPR is roughly equal across gender (~32%), but PPV differs sharply (51% vs 64%) — opposite pattern from the racial comparison.
+
+### Dataset 3 — Gender Shades (IBM, original 2018 audit)
+Source: Buolamwini & Gebru, FAccT 2018, Table 1. IBM Watson Visual Recognition on PPB dataset.
+PPB subgroup sizes: lighter male n=340, lighter female n=340, darker male n=295, darker female n=295 (total 1,270).
+IBM error rates from Table 1: LM=0.3%, DF=34.7% are highly cited; LF=7.1% and DM=12.0% are from the same table and have not been independently verified against the paper PDF (the PDF was inaccessible during V3 development).
+- Lighter-skinned: TP=339 FP=24 FN=1 TN=316 (n=680) — FPR=7.1%, FNR=0.3%
+- Darker-skinned:  TP=260 FP=102 FN=35 TN=193 (n=590) — FPR=34.7%, FNR=12.0%
+- Confusion matrix framing: positive=Male, negative=Female; truth is actual gender.
+
+### Dataset 4 — Bertrand & Mullainathan (2004) — Emily & Greg
+Source: "Are Emily and Greg More Employable Than Lakisha and Jamal?" AER 94(4), 2004.
+Callback rates from replicated analysis (kurodaecon.github.io): WH=10.79%, WL=8.50%, BH=6.70%, BL=6.19%.
+Split: 1,218 high-quality + 1,217 low-quality resumes per race; n=2,435 per group.
+- White-named: TP=131 FP=103 FN=1,087 TN=1,114 (n=2,435)
+- Black-named:  TP=82  FP=75  FN=1,136 TN=1,142 (n=2,435)
+- Confusion matrix framing: positive=Got Callback, truth=High-Quality Resume.
+- Pedagogical note: base rates are equal by design (50/50 quality split), so Chouldechova's impossibility doesn't apply. Any TPR gap is direct evidence of discrimination.
 
 ---
 
@@ -105,7 +125,10 @@ Matching is by sorted set of codes — list order doesn't matter.
 ## Version History
 
 ### Version 1 — June 2026
-Augmented confusion matrices (4×4 grid with marginals) for Black and White defendants. Ratio workspace with active-zone click model and drag-and-drop. Smart sum recognition via `normalizeCodes()`. Recognition against `data/metrics.json` (10 metrics: TPR, FNR, FPR, TNR, PPV, FDR, NPV, FOR, Accuracy, Prevalence). Live result display below each matrix. Saved metrics comparison table. Chip hover-reveal × button. Drag-to-delete via trash zone. Four-slide tutorial carousel (matches COMPAS pattern: `#explainer` section, `window.restartTutorial()`, slide card CSS, `sv-*` visualization classes). Research footer.
+Augmented confusion matrices (4×4 grid with marginals) for Black and White defendants. Ratio workspace with active-zone click model and drag-and-drop. Smart sum recognition via `normalizeCodes()`. Recognition against `data/metrics.json` (10 metrics: TPR, FNR, FPR, TNR, PPV, FDR, NPV, FOR, Accuracy, Prevalence). Live result display below each matrix. Saved metrics comparison table. Chip hover-reveal × button. Drag-to-delete via trash zone. Four-slide tutorial carousel (matches COMPAS pattern: `#explainer` section, `window.restartTutorial()`, slide card CSS, `sv-*` visualization classes). Print / Export button opens new window and triggers print dialog. Research footer.
+
+### Version 2 — June 2026
+Dataset switcher added. Four datasets: COMPAS Race (default), COMPAS Gender, Gender Shades (IBM 2018), and Emily & Greg (Bertrand & Mullainathan 2004). Each dataset has its own `rowLabels`, `colLabels`, `rowBadges`, and `cellDescs` so the matrix labels update correctly when switching. The `switchDataset(i)` function resets workspace state and re-renders matrices. Metric commentary notes when COMPAS-specific text is shown for a non-COMPAS dataset. Print / Export output adapts to the active dataset and shows a dataset-appropriate footer note (Chouldechova for COMPAS, equal-base-rate note for Emily & Greg, PPB-balance note for Gender Shades).
 
 ---
 
@@ -118,8 +141,8 @@ Augmented confusion matrices (4×4 grid with marginals) for Black and White defe
 - Export/print the saved metrics table
 
 ### V3
-- Dataset switcher: multiple real-world datasets
-- The `DATASET` constant in app.js is already structured for this
+- Dataset switcher ✓ done (4 datasets: COMPAS Race, COMPAS Gender, Gender Shades, Emily & Greg)
+- Verify Gender Shades LF=7.1% and DM=12.0% against paper Table 1 (PDF was inaccessible during V3 dev)
 
 ---
 
