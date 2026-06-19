@@ -276,3 +276,156 @@ main {
 .stat.fp-rate .stat-value { color: var(--red); }
 .stat.ppv     .stat-value { color: var(--blue); }
 .stat.fn-rate .stat-value { color: #b45309; }
+
+/* ── Clickable stat buttons ──────────────────────────────────────────────── */
+.stat[data-stat] {
+  cursor: pointer;
+  transition: transform 0.1s, box-shadow 0.1s;
+}
+.stat[data-stat]:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+}
+.stat.stat-open {
+  outline: 2px solid;
+  outline-offset: 3px;
+}
+.stat.fp-rate.stat-open { outline-color: var(--red); }
+.stat.ppv.stat-open     { outline-color: var(--blue); }
+.stat.fn-rate.stat-open { outline-color: #d97706; }
+
+/* ── Cell highlight transitions ──────────────────────────────────────────── */
+.mg-cell {
+  transition: opacity 0.2s, filter 0.2s, box-shadow 0.2s, background-color 0.2s;
+}
+
+/* When any stat is active: dim all cells */
+.matrix-grid[data-active-stat] [data-cell] {
+  opacity: 0.2;
+  filter: grayscale(1);
+}
+
+/* False Alarm Rate — FP/(FP+TN) */
+.matrix-grid[data-active-stat="fp-rate"] [data-cell="fp"] {
+  opacity: 1; filter: none;
+  background: rgba(233,69,96,0.08);
+  box-shadow: inset 0 0 0 3px var(--red);
+}
+.matrix-grid[data-active-stat="fp-rate"] [data-cell="tn"] {
+  opacity: 0.8; filter: none;
+  background: rgba(233,69,96,0.03);
+  box-shadow: inset 0 0 0 1.5px rgba(233,69,96,0.45);
+}
+
+/* Score Accuracy / PPV — TP/(TP+FP) */
+.matrix-grid[data-active-stat="ppv"] [data-cell="tp"] {
+  opacity: 1; filter: none;
+  background: rgba(15,52,96,0.07);
+  box-shadow: inset 0 0 0 3px var(--blue);
+}
+.matrix-grid[data-active-stat="ppv"] [data-cell="fp"] {
+  opacity: 0.8; filter: none;
+  background: rgba(15,52,96,0.03);
+  box-shadow: inset 0 0 0 1.5px rgba(15,52,96,0.45);
+}
+
+/* Miss Rate — FN/(FN+TP) */
+.matrix-grid[data-active-stat="fn-rate"] [data-cell="fn"] {
+  opacity: 1; filter: none;
+  background: rgba(217,119,6,0.08);
+  box-shadow: inset 0 0 0 3px #d97706;
+}
+.matrix-grid[data-active-stat="fn-rate"] [data-cell="tp"] {
+  opacity: 0.8; filter: none;
+  background: rgba(217,119,6,0.03);
+  box-shadow: inset 0 0 0 1.5px rgba(217,119,6,0.45);
+}
+
+/* ── Stat explainer panel ─────────────────────────────────────────────────── */
+.stat-explainer {
+  max-width: 1280px;
+  margin: 1rem auto 0;
+  padding: 0.9rem 1.25rem;
+  background: var(--white);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+.stat-explainer.hidden { display: none; }
+
+.explainer-fraction {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
+.frac-label {
+  font-family: sans-serif;
+  font-size: 0.58rem;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.frac-bar {
+  width: 48px;
+  height: 2px;
+  background: #1e293b;
+  margin: 2px 0;
+}
+
+/* Mini 2×2 confusion matrix — cells in reading order: TP FP / FN TN */
+.mini-matrix {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
+  width: 36px;
+  height: 36px;
+  border: 1.5px solid #1e293b;
+  gap: 1px;
+  background: #1e293b;
+  border-radius: 2px;
+  overflow: hidden;
+}
+.mm-cell        { background: #dde1e7; }
+.mm-red   .mm-on { background: var(--red); }
+.mm-blue  .mm-on { background: var(--blue); }
+.mm-amber .mm-on { background: #d97706; }
+
+.explainer-text { flex: 1; }
+
+.explainer-name {
+  font-family: sans-serif;
+  font-size: 0.7rem;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-bottom: 0.3rem;
+}
+
+.explainer-desc {
+  font-size: 0.9rem;
+  line-height: 1.45;
+  color: #334155;
+}
+
+.explainer-close {
+  background: none;
+  border: 1px solid #e2e8f0;
+  cursor: pointer;
+  font-size: 1rem;
+  color: var(--muted);
+  width: 26px;
+  height: 26px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  flex-shrink: 0;
+  line-height: 1;
+}
+.explainer-close:hover { background: #f1f5f9; border-color: #94a3b8; }
