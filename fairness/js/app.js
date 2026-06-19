@@ -154,12 +154,12 @@ const DATASETS = [
     label: 'Gender Shades',
     source: 'Buolamwini & Gebru, FAccT 2018 — IBM Watson Visual Recognition on PPB dataset (n=1,270)',
     groups: [
-      // LM n=340, LF n=340. IBM error rates: LM=0.3%, LF=7.1% (Tbl 1).
-      // LM: FN=round(340×.003)=1, TP=339; LF: FP=round(340×.071)=24, TN=316
-      { name: 'Lighter-Skinned', tp: 339, fp: 24,  fn: 1,  tn: 316 },
-      // DM n=295, DF n=295. IBM error rates: DM=12.0%, DF=34.7% (Tbl 1).
-      // DM: FN=round(295×.12)=35, TP=260; DF: FP=round(295×.347)=102, TN=193
-      { name: 'Darker-Skinned',  tp: 260, fp: 102, fn: 35, tn: 193 }
+      // Subgroup %: LM=30.3%, LF=23.3% → LM n=385, LF n=296 (total lighter=681)
+      // IBM error rates (Tbl 1): LM=0.3%→FN=1,TP=384; LF=7.1%→FP=21,TN=275
+      { name: 'Lighter-Skinned', tp: 384, fp: 21, fn: 1,  tn: 275 },
+      // Subgroup %: DM=25.0%, DF=21.3% → DM n=318, DF n=271 (total darker=589)
+      // IBM error rates (Tbl 1): DM=12.0%→FN=38,TP=280; DF=34.7%→FP=94,TN=177
+      { name: 'Darker-Skinned',  tp: 280, fp: 94, fn: 38, tn: 177 }
     ],
     rowLabels: ['Classified Male', 'Classified Female'],
     colLabels:  ['Is Male', 'Is Female'],

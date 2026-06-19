@@ -49,10 +49,10 @@ Same CSV and filter as Dataset 1, split on `sex` field.
 
 ### Dataset 3 — Gender Shades (IBM, original 2018 audit)
 Source: Buolamwini & Gebru, FAccT 2018, Table 1. IBM Watson Visual Recognition on PPB dataset.
-PPB subgroup sizes: lighter male n=340, lighter female n=340, darker male n=295, darker female n=295 (total 1,270).
-IBM error rates from Table 1: LM=0.3%, DF=34.7% are highly cited; LF=7.1% and DM=12.0% are from the same table and have not been independently verified against the paper PDF (the PDF was inaccessible during V3 development).
-- Lighter-skinned: TP=339 FP=24 FN=1 TN=316 (n=680) — FPR=7.1%, FNR=0.3%
-- Darker-skinned:  TP=260 FP=102 FN=35 TN=193 (n=590) — FPR=34.7%, FNR=12.0%
+PPB subgroup percentages (verified from paper): LM=30.3%, LF=23.3%, DM=25.0%, DF=21.3% → counts: LM=385, LF=296, DM=318, DF=271 (total 1,270).
+IBM error rates (all verified from Table 1): LM=0.3%, LF=7.1%, DM=12.0%, DF=34.7%.
+- Lighter-skinned: TP=384 FP=21 FN=1 TN=275 (n=681) — FPR=7.1%, FNR=0.3%
+- Darker-skinned:  TP=280 FP=94 FN=38 TN=177 (n=589) — FPR=34.7%, FNR=12.0%
 - Confusion matrix framing: positive=Male, negative=Female; truth is actual gender.
 
 ### Dataset 4 — Bertrand & Mullainathan (2004) — Emily & Greg
@@ -142,7 +142,7 @@ Dataset switcher added. Four datasets: COMPAS Race (default), COMPAS Gender, Gen
 
 ### V3
 - Dataset switcher ✓ done (4 datasets: COMPAS Race, COMPAS Gender, Gender Shades, Emily & Greg)
-- Verify Gender Shades LF=7.1% and DM=12.0% against paper Table 1 (PDF was inaccessible during V3 dev)
+- All Gender Shades numbers now fully verified (error rates and subgroup counts)
 
 ---
 
