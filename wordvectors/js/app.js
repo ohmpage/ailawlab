@@ -261,6 +261,12 @@ function goToDemo() {
   document.getElementById('word-a').focus();
 }
 
+window.restartTutorial = function () {
+  renderSlide(0);
+  document.getElementById('explainer').style.display = '';
+  document.getElementById('demo').style.display      = '';
+};
+
 // ─── Explainer drawings (stylized, using hardcoded positions) ────────────────
 
 // Shared word positions (approximate, for illustration only)

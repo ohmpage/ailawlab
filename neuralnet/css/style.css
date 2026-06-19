@@ -79,6 +79,27 @@ header h1 span { color: var(--red); }
 }
 .icon-btn:hover { background: rgba(255,255,255,0.15); }
 
+.ctrl-settings-btn { color: var(--navy); font-size: 1rem; }
+.ctrl-settings-btn:hover { background: rgba(0,0,0,0.06); }
+
+.ctrl-divider {
+  width: 1px;
+  height: 1.5rem;
+  background: var(--border);
+  flex-shrink: 0;
+}
+
+.ctrl-tour-link {
+  margin-left: auto;
+  font-family: sans-serif;
+  font-size: 0.82rem;
+  color: var(--blue);
+  text-decoration: none;
+  white-space: nowrap;
+  padding-right: 0.25rem;
+}
+.ctrl-tour-link:hover { text-decoration: underline; }
+
 /* ── Explainer ───────────────────────────────────────────────────────────────── */
 #explainer {
   flex: 1;

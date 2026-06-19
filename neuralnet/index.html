@@ -10,14 +10,9 @@
 <body>
 
 <!-- ── Header ──────────────────────────────────────────────────────────────── -->
-<header>
-  <div class="header-left">
-    <button id="settings-toggle" class="icon-btn" title="Settings" aria-label="Open settings">&#9776;</button>
-    <h1>Neural Network <span>Trainer</span></h1>
-  </div>
-  <p class="byline">by <a href="https://www.paulohm.com/">Paul Ohm</a>
-    &ensp;·&ensp; <a id="tour-link" href="#">Take a tour</a></p>
-</header>
+<header id="site-header"></header>
+<script>window.APP_HEADER = { h1: 'Neural Network <span>Trainer</span>' };</script>
+<script src="../shared/js/header.js"></script>
 
 <!-- ── Explainer (4 slides) ────────────────────────────────────────────────── -->
 <section id="explainer">
@@ -109,6 +104,8 @@
   <!-- Bottom controls bar -->
   <div id="controls-bar" class="hidden">
     <div class="controls-inner">
+      <button id="settings-toggle" class="icon-btn ctrl-settings-btn" title="Network Settings" aria-label="Open settings">&#9776;</button>
+      <span class="ctrl-divider"></span>
       <span class="ctrl-label">Step by:</span>
       <div class="radio-group">
         <label><input type="radio" name="step-mode" value="node"    checked> Node</label>
@@ -121,6 +118,7 @@
       <input type="number" id="step-count" min="1" max="500" step="1" value="1">
       <button id="btn-run" class="run-btn">Step</button>
       <span id="training-status"></span>
+      <a href="#" id="tour-link" class="ctrl-tour-link">Take a tour</a>
     </div>
   </div>
 

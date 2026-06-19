@@ -182,6 +182,14 @@ function showApp() {
   openPanel();
 }
 
+window.restartTutorial = function () {
+  if (tourRunning) endTour();
+  slideIndex = 0;
+  renderSlide();
+  document.getElementById('app').classList.add('hidden');
+  document.getElementById('explainer').classList.remove('hidden');
+};
+
 // ═══════════════════════════════════════════════════════════════════
 //  NEURAL NETWORK STATE
 // ═══════════════════════════════════════════════════════════════════
@@ -1262,7 +1270,7 @@ document.addEventListener('DOMContentLoaded', function() {
   });
   document.getElementById('btn-skip').addEventListener('click', showApp);
 
-  // Header controls
+  // Controls bar
   document.getElementById('settings-toggle').addEventListener('click', togglePanel);
   document.getElementById('tour-link').addEventListener('click', function(e){
     e.preventDefault();

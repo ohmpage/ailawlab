@@ -91,6 +91,13 @@ function showMainApp() {
   document.getElementById('main-app').classList.remove('hidden');
 }
 
+window.restartTutorial = function () {
+  slideIndex = 0;
+  renderSlide();
+  document.getElementById('main-app').classList.add('hidden');
+  document.getElementById('explainer').classList.remove('hidden');
+};
+
 let rows = [];
 let threshold     = 5;
 let activeStat    = null;
