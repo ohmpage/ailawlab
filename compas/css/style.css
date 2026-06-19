@@ -59,6 +59,13 @@ main {
   accent-color: var(--red);
 }
 
+/* Wand threshold sliders share the slider-wrap but use violet accent */
+.wand-card .slider-wrap input[type="range"] {
+  width: 100%;
+  cursor: pointer;
+  accent-color: var(--wand);
+}
+
 /* Ticks are absolutely positioned so each is centered on the exact
    theoretical thumb-center position, regardless of label width.
    Formula: left = --tr + i/9 * (100% - 2*--tr)
@@ -429,3 +436,220 @@ main {
   line-height: 1;
 }
 .explainer-close:hover { background: #f1f5f9; border-color: #94a3b8; }
+
+/* ── Utility ──────────────────────────────────────────────────────────────── */
+.hidden { display: none; }
+
+/* ── Magic wand color tokens ─────────────────────────────────────────────── */
+:root {
+  --wand:       #7c3aed;           /* vivid violet */
+  --wand-light: rgba(124,58,237,0.12);
+  --wand-glow:  rgba(124,58,237,0.28);
+}
+
+/* ── Magic Wand enter button (inside real control card) ──────────────────── */
+.wand-toggle-row {
+  margin-top: 0.9rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid #e2e8f0;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.wand-btn {
+  background: none;
+  border: 1px solid var(--wand);
+  color: var(--wand);
+  font-family: sans-serif;
+  font-size: 0.82rem;
+  font-weight: 600;
+  padding: 0.4rem 0.9rem;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background 0.2s, box-shadow 0.2s;
+  letter-spacing: 0.01em;
+}
+.wand-btn:hover {
+  background: var(--wand-light);
+  box-shadow: 0 2px 10px var(--wand-glow);
+}
+
+/* ── Wand card (replaces control card in wand mode) ──────────────────────── */
+.wand-card {
+  background: var(--white);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  margin-bottom: 1.25rem;
+  overflow: hidden;
+}
+
+/* Deep purple-indigo gradient banner */
+.wand-banner {
+  background: linear-gradient(135deg, #2e1065 0%, #1e1b4b 100%);
+  color: #c4b5fd;
+  font-family: sans-serif;
+  font-size: 0.82rem;
+  padding: 0.6rem 1.25rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+/* Text-only badge — glowing label, not a button */
+.wand-badge {
+  color: #e9d5ff;
+  font-weight: 700;
+  font-size: 0.7rem;
+  letter-spacing: 0.12em;
+  flex-shrink: 0;
+  text-shadow: 0 0 10px rgba(233,213,255,0.7), 0 0 24px rgba(196,181,253,0.4);
+}
+
+.wand-banner-actions {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.wand-defaults-btn {
+  background: none;
+  border: none;
+  color: rgba(196,181,253,0.7);
+  font-family: sans-serif;
+  font-size: 0.75rem;
+  padding: 0.3rem 0.5rem;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: color 0.15s;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+.wand-defaults-btn:hover { color: #c4b5fd; }
+
+.wand-exit-btn {
+  background: none;
+  border: 1px solid rgba(196,181,253,0.4);
+  color: #c4b5fd;
+  font-family: sans-serif;
+  font-size: 0.78rem;
+  padding: 0.3rem 0.7rem;
+  border-radius: 4px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: border-color 0.15s, color 0.15s;
+}
+.wand-exit-btn:hover { border-color: #c4b5fd; color: #fff; }
+
+.wand-body {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+}
+
+@media (max-width: 860px) {
+  .wand-body { grid-template-columns: 1fr; }
+}
+
+/* ── Wand sections (one per intervention) ────────────────────────────────── */
+.wand-section {
+  padding: 0.75rem 1.5rem 0.75rem;
+}
+
+.wand-section + .wand-section {
+  border-left: 1px solid #e9e3f7;
+}
+
+@media (max-width: 860px) {
+  .wand-section + .wand-section {
+    border-left: none;
+    border-top: 1px solid #e9e3f7;
+  }
+}
+
+.wand-section-label {
+  font-family: sans-serif;
+  font-size: 0.62rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: var(--wand);
+  margin-bottom: 0.55rem;
+}
+
+.wand-slider-group {
+  margin-bottom: 0.7rem;
+}
+
+/* Threshold label line inside wand section */
+.wand-thresh-header {
+  font-family: sans-serif;
+  font-size: 0.85rem;
+  margin-bottom: 0.4rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+/* Base-rate / accuracy label line */
+.wand-br-header {
+  font-family: sans-serif;
+  font-size: 0.85rem;
+  margin-bottom: 0.4rem;
+}
+
+/* Violet accent for all wand range sliders */
+.wand-range         { width: 100%; cursor: pointer; accent-color: var(--wand); }
+.wand-range-accuracy { accent-color: var(--wand); }
+
+/* Endpoint labels below base-rate / accuracy sliders */
+.br-endpoints {
+  display: flex;
+  justify-content: space-between;
+  font-family: sans-serif;
+  font-size: 0.6rem;
+  color: var(--muted);
+  margin-top: 1px;
+}
+
+/* Disclaimer inline below Intervention 2 sliders */
+.wand-disclaimer {
+  font-family: sans-serif;
+  font-size: 0.7rem;
+  font-style: italic;
+  color: var(--muted);
+  margin: 0.3rem 0 0;
+  line-height: 1.45;
+}
+
+/* ── Pulsing glow animation for wand-mode matrix cards ───────────────────── */
+@keyframes wand-pulse {
+  0%, 100% {
+    box-shadow: 0 0 0 1.5px var(--wand),
+                0 0 14px var(--wand-light),
+                var(--shadow);
+  }
+  50% {
+    box-shadow: 0 0 0 1.5px var(--wand),
+                0 0 28px var(--wand-glow),
+                0 0 48px var(--wand-light),
+                var(--shadow);
+  }
+}
+
+/* ── Wand mode — matrix card visual treatment ─────────────────────────────── */
+main.wand-mode .matrix-card {
+  border: 1.5px solid var(--wand);
+  background: #faf5ff;
+  animation: wand-pulse 3s ease-in-out infinite;
+}
+
+main.wand-mode .group-header h2::after {
+  content: " (hypothetical)";
+  font-size: 0.7rem;
+  font-style: italic;
+  color: var(--wand);
+  font-weight: normal;
+  opacity: 0.75;
+}

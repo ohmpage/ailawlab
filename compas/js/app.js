@@ -1,8 +1,18 @@
 'use strict';
 
 let rows = [];
-let threshold = 5;
-let activeStat = null;
+let threshold     = 5;
+let activeStat    = null;
+
+// ── Magic Wand state ─────────────────────────────────────────────────────────
+let wandMode          = false;
+let thresholdBlack    = 5;
+let thresholdWhite    = 5;
+let baseRateBlack     = null;  // current wand value (modified by slider)
+let baseRateWhite     = null;
+let realBaseRateBlack = null;  // immutable — from CSV; used by Defaults button
+let realBaseRateWhite = null;
+let accuracy          = 0;     // 0 = real COMPAS params, 1 = perfect model
 
 // ── CSV parsing ──────────────────────────────────────────────────────────────
 function parseCSV(text) {
@@ -28,7 +38,7 @@ function splitCSVLine(line) {
   return out;
 }
 
-// ── Computation ──────────────────────────────────────────────────────────────
+// ── Real-data computation ────────────────────────────────────────────────────
 function computeMatrix(race, thresh) {
   const group = rows.filter(r => r.race === race && r.score_text && r.score_text !== 'N/A');
   let TP = 0, FP = 0, FN = 0, TN = 0;
@@ -44,6 +54,31 @@ function computeMatrix(race, thresh) {
   return { TP, FP, FN, TN, n: group.length };
 }
 
+// ── Magic Wand computation ───────────────────────────────────────────────────
+// Derives per-group real α (sensitivity) and q (PPV) from the CSV at the given
+// threshold, scales them toward perfection by the accuracy slider, then applies
+// the counterfactual base rate using the calibration-preserving formula.
+function computeMatrixWand(race, thresh, baseRate) {
+  const m      = computeMatrix(race, thresh);
+  const N      = m.n;
+  const nRecid = m.TP + m.FN;
+  const a0     = nRecid        > 0 ? m.TP / nRecid        : 0.5;  // sensitivity
+  const q0     = (m.TP + m.FP) > 0 ? m.TP / (m.TP + m.FP) : 0.5; // PPV
+
+  const a = a0 + accuracy * (1 - a0);
+  const q = q0 + accuracy * (1 - q0);
+
+  const nRec   = N * baseRate;
+  const nNoRec = N * (1 - baseRate);
+  const TP     = Math.round(nRec * a);
+  const FN     = Math.round(nRec * (1 - a));
+  // Clamp FP so TN ≥ 0 (prevents out-of-range at high base rates)
+  const FP     = Math.min(Math.round(nRec * a * (1 - q) / q), Math.round(nNoRec));
+  const TN     = Math.max(0, Math.round(nNoRec) - FP);
+  return { TP, FP, FN, TN, n: N };
+}
+
+// ── Derived stats ────────────────────────────────────────────────────────────
 function deriveStats({ TP, FP, FN, TN }) {
   const nonRecid = FP + TN;
   const recid    = TP + FN;
@@ -86,7 +121,6 @@ const STATS = {
   },
 };
 
-// Mini 2×2 grid: cells in order [TP, FP, FN, TN] matching the main matrix layout
 function miniMatrix(highlightCells, color) {
   return `<div class="mini-matrix mm-${color}">${
     ['tp', 'fp', 'fn', 'tn'].map(c =>
@@ -101,17 +135,13 @@ function handleStatClick(key) {
 }
 
 function updateStatHighlights() {
-  // Apply/remove data-active-stat on both grids
   document.querySelectorAll('.matrix-grid').forEach(g => {
     if (activeStat) g.dataset.activeStat = activeStat;
     else            delete g.dataset.activeStat;
   });
-
-  // Reflect open state on all stat buttons
   document.querySelectorAll('[data-stat]').forEach(el => {
     el.classList.toggle('stat-open', el.dataset.stat === activeStat);
   });
-
   renderExplainer();
 }
 
@@ -198,30 +228,113 @@ function renderPanel(group, m) {
   `;
 }
 
+const THRESH_LABELS = { 1: 'everyone flagged', 5: 'Northpointe default', 8: 'High scores only', 10: 'score 10 only' };
+
 function updateThresholdUI() {
   document.getElementById('thresh-val').textContent = threshold;
-
   const tag = document.getElementById('thresh-tag');
-  const labels = { 1: 'everyone flagged', 5: 'Northpointe default', 8: 'High scores only', 10: 'score 10 only' };
-  if (labels[threshold]) {
-    tag.textContent = labels[threshold];
+  if (THRESH_LABELS[threshold]) {
+    tag.textContent = THRESH_LABELS[threshold];
     tag.classList.add('visible');
   } else {
     tag.classList.remove('visible');
   }
 }
 
+function updateWandThresholdUI() {
+  for (const [thresh, valId, tagId] of [
+    [thresholdBlack, 'thresh-black-val', 'thresh-black-tag'],
+    [thresholdWhite, 'thresh-white-val', 'thresh-white-tag'],
+  ]) {
+    document.getElementById(valId).textContent = thresh;
+    const tag = document.getElementById(tagId);
+    if (THRESH_LABELS[thresh]) {
+      tag.textContent = THRESH_LABELS[thresh];
+      tag.classList.add('visible');
+    } else {
+      tag.classList.remove('visible');
+    }
+  }
+}
+
+function updateAccuracyLabel() {
+  const el = document.getElementById('accuracy-val');
+  if (accuracy === 0)      el.textContent = 'Current (COMPAS)';
+  else if (accuracy >= 1)  el.textContent = 'Perfect model';
+  else                     el.textContent = `${Math.round(accuracy * 100)}% improved`;
+}
+
 function render() {
-  const black = computeMatrix('African-American', threshold);
-  const white = computeMatrix('Caucasian', threshold);
+  const black = wandMode
+    ? computeMatrixWand('African-American', thresholdBlack, baseRateBlack)
+    : computeMatrix('African-American', threshold);
+  const white = wandMode
+    ? computeMatrixWand('Caucasian', thresholdWhite, baseRateWhite)
+    : computeMatrix('Caucasian', threshold);
 
   document.getElementById('n-black').textContent = `${fmt(black.n)} defendants`;
   document.getElementById('n-white').textContent = `${fmt(white.n)} defendants`;
 
   renderPanel('black', black);
   renderPanel('white', white);
-  updateThresholdUI();
-  updateStatHighlights(); // re-apply highlights after DOM rebuild
+
+  if (wandMode) updateWandThresholdUI();
+  else          updateThresholdUI();
+
+  updateStatHighlights();
+}
+
+// ── Magic Wand enter / exit ──────────────────────────────────────────────────
+function enterWandMode() {
+  wandMode       = true;
+  thresholdBlack = threshold;
+  thresholdWhite = threshold;
+  accuracy       = 0;
+
+  document.getElementById('thresh-black-slider').value = thresholdBlack;
+  document.getElementById('thresh-white-slider').value = thresholdWhite;
+  document.getElementById('br-black-slider').value     = Math.round(baseRateBlack * 100);
+  document.getElementById('br-white-slider').value     = Math.round(baseRateWhite * 100);
+  document.getElementById('accuracy-slider').value     = 0;
+
+  // Update visible base-rate labels to match pre-loaded slider values
+  document.getElementById('br-black-val').textContent = `${Math.round(baseRateBlack * 100)}%`;
+  document.getElementById('br-white-val').textContent = `${Math.round(baseRateWhite * 100)}%`;
+  updateAccuracyLabel();
+
+  document.getElementById('control-card').classList.add('hidden');
+  document.getElementById('wand-controls').classList.remove('hidden');
+  document.querySelector('main').classList.add('wand-mode');
+  render();
+}
+
+function exitWandMode() {
+  wandMode   = false;
+  activeStat = null;
+
+  document.getElementById('wand-controls').classList.add('hidden');
+  document.getElementById('control-card').classList.remove('hidden');
+  document.querySelector('main').classList.remove('wand-mode');
+  render();
+}
+
+function resetWandDefaults() {
+  thresholdBlack = threshold;
+  thresholdWhite = threshold;
+  baseRateBlack  = realBaseRateBlack;
+  baseRateWhite  = realBaseRateWhite;
+  accuracy       = 0;
+
+  document.getElementById('thresh-black-slider').value = thresholdBlack;
+  document.getElementById('thresh-white-slider').value = thresholdWhite;
+  document.getElementById('br-black-slider').value     = Math.round(realBaseRateBlack * 100);
+  document.getElementById('br-white-slider').value     = Math.round(realBaseRateWhite * 100);
+  document.getElementById('accuracy-slider').value     = 0;
+
+  document.getElementById('br-black-val').textContent = `${Math.round(realBaseRateBlack * 100)}%`;
+  document.getElementById('br-white-val').textContent = `${Math.round(realBaseRateWhite * 100)}%`;
+  updateAccuracyLabel();
+  render();
 }
 
 // ── Event delegation ─────────────────────────────────────────────────────────
@@ -231,15 +344,49 @@ document.addEventListener('click', e => {
     handleStatClick(statEl.dataset.stat);
     return;
   }
-  // Click outside both a stat button and the explainer panel → close
   if (!e.target.closest('#stat-explainer') && activeStat !== null) {
     activeStat = null;
     updateStatHighlights();
   }
 });
 
+// Real-mode threshold
 document.getElementById('threshold-slider').addEventListener('input', e => {
   threshold = +e.target.value;
+  render();
+});
+
+// Wand entry / exit / defaults
+document.getElementById('btn-wand-enter').addEventListener('click', enterWandMode);
+document.getElementById('btn-wand-exit').addEventListener('click', exitWandMode);
+document.getElementById('btn-wand-defaults').addEventListener('click', resetWandDefaults);
+
+// Wand threshold sliders
+document.getElementById('thresh-black-slider').addEventListener('input', e => {
+  thresholdBlack = +e.target.value;
+  render();
+});
+document.getElementById('thresh-white-slider').addEventListener('input', e => {
+  thresholdWhite = +e.target.value;
+  render();
+});
+
+// Base rate sliders
+document.getElementById('br-black-slider').addEventListener('input', e => {
+  baseRateBlack = +e.target.value / 100;
+  document.getElementById('br-black-val').textContent = `${e.target.value}%`;
+  render();
+});
+document.getElementById('br-white-slider').addEventListener('input', e => {
+  baseRateWhite = +e.target.value / 100;
+  document.getElementById('br-white-val').textContent = `${e.target.value}%`;
+  render();
+});
+
+// Accuracy slider
+document.getElementById('accuracy-slider').addEventListener('input', e => {
+  accuracy = +e.target.value / 100;
+  updateAccuracyLabel();
   render();
 });
 
@@ -249,6 +396,13 @@ fetch('data/compas-scores-two-years.csv')
   .then(text => {
     rows = parseCSV(text);
     render();
+    // Compute real base rates (independent of threshold — all recidivists / total)
+    const bm = computeMatrix('African-American', 1);  // thresh=1 flags everyone; TP+FN = all recidivists
+    const wm = computeMatrix('Caucasian', 1);
+    baseRateBlack     = (bm.TP + bm.FN) / bm.n;
+    baseRateWhite     = (wm.TP + wm.FN) / wm.n;
+    realBaseRateBlack = baseRateBlack;
+    realBaseRateWhite = baseRateWhite;
   })
   .catch(err => {
     document.querySelector('.matrices-row').innerHTML =

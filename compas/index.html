@@ -17,7 +17,7 @@
 <main>
 
   <!-- ── Threshold control ─────────────────────────────────────────────────── -->
-  <section class="control-card">
+  <section class="control-card" id="control-card">
     <div class="threshold-header">
       High-risk cutoff: scores <strong id="thresh-val">5</strong> and above &rarr; <strong>High Risk</strong>
       <span class="threshold-tag" id="thresh-tag">Northpointe default</span>
@@ -29,7 +29,92 @@
         <span>6</span><span>7</span><span>8</span><span>9</span><span>10</span>
       </div>
     </div>
+    <div class="wand-toggle-row">
+      <button id="btn-wand-enter" class="wand-btn">🪄 Wave the Magic Wand</button>
+    </div>
   </section>
+
+  <!-- ── Magic Wand controls (hidden until wand mode) ──────────────────────── -->
+  <div class="wand-card hidden" id="wand-controls">
+    <div class="wand-banner">
+      <span class="wand-badge">🪄 MAGIC WAND</span>
+      Hypothetical — numbers are simulated, not from actual COMPAS data.
+      <div class="wand-banner-actions">
+        <button id="btn-wand-defaults" class="wand-defaults-btn">Defaults</button>
+        <button id="btn-wand-exit" class="wand-exit-btn">&larr; Return to Reality</button>
+      </div>
+    </div>
+
+    <div class="wand-body">
+
+      <!-- Intervention 1: Race-specific thresholds -->
+      <div class="wand-section">
+        <div class="wand-section-label">Intervention 1 &mdash; Race-specific high-risk cutoff</div>
+        <div class="wand-slider-group">
+          <div class="wand-thresh-header">
+            Black defendants: scores <strong id="thresh-black-val">5</strong> and above &rarr; High Risk
+            <span class="threshold-tag" id="thresh-black-tag"></span>
+          </div>
+          <div class="slider-wrap">
+            <input type="range" id="thresh-black-slider" min="1" max="10" value="5">
+            <div class="slider-ticks" aria-hidden="true">
+              <span>1</span><span>2</span><span>3</span><span>4</span><span>5</span>
+              <span>6</span><span>7</span><span>8</span><span>9</span><span>10</span>
+            </div>
+          </div>
+        </div>
+        <div class="wand-slider-group">
+          <div class="wand-thresh-header">
+            White defendants: scores <strong id="thresh-white-val">5</strong> and above &rarr; High Risk
+            <span class="threshold-tag" id="thresh-white-tag"></span>
+          </div>
+          <div class="slider-wrap">
+            <input type="range" id="thresh-white-slider" min="1" max="10" value="5">
+            <div class="slider-ticks" aria-hidden="true">
+              <span>1</span><span>2</span><span>3</span><span>4</span><span>5</span>
+              <span>6</span><span>7</span><span>8</span><span>9</span><span>10</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Intervention 2: Base rates -->
+      <div class="wand-section">
+        <div class="wand-section-label">Intervention 2 &mdash; Underlying reoffense rate</div>
+        <div class="wand-slider-group">
+          <div class="wand-br-header">
+            Black defendants: <strong id="br-black-val">51%</strong> actual reoffense rate
+          </div>
+          <input type="range" id="br-black-slider" min="5" max="75" step="1" class="wand-range">
+          <div class="br-endpoints" aria-hidden="true"><span>5%</span><span>75%</span></div>
+        </div>
+        <div class="wand-slider-group">
+          <div class="wand-br-header">
+            White defendants: <strong id="br-white-val">39%</strong> actual reoffense rate
+          </div>
+          <input type="range" id="br-white-slider" min="5" max="75" step="1" class="wand-range">
+          <div class="br-endpoints" aria-hidden="true"><span>5%</span><span>75%</span></div>
+        </div>
+        <p class="wand-disclaimer">
+          Equalizing base rates also requires retraining COMPAS on the new population &mdash;
+          the algorithm must recalibrate to the new reality.
+        </p>
+      </div>
+
+      <!-- Intervention 3: Model accuracy -->
+      <div class="wand-section">
+        <div class="wand-section-label">Intervention 3 &mdash; Model accuracy</div>
+        <div class="wand-slider-group">
+          <div class="wand-br-header">
+            Accuracy: <strong id="accuracy-val">Current (COMPAS)</strong>
+          </div>
+          <input type="range" id="accuracy-slider" min="0" max="100" step="1" value="0" class="wand-range wand-range-accuracy">
+          <div class="br-endpoints" aria-hidden="true"><span>Current (COMPAS)</span><span>Perfect</span></div>
+        </div>
+      </div>
+
+    </div><!-- /.wand-body -->
+  </div>
 
   <!-- ── Two confusion matrices ─────────────────────────────────────────────── -->
   <div class="matrices-row">
