@@ -105,17 +105,16 @@ Matching is by sorted set of codes — list order doesn't matter.
 ## Version History
 
 ### Version 1 — June 2026
-Augmented confusion matrices (4×4 grid with marginals) for Black and White defendants. Ratio workspace with active-zone click model and drag-and-drop. Smart sum recognition via `normalizeCodes()`. Recognition against `data/metrics.json` (10 metrics: TPR, FNR, FPR, TNR, PPV, FDR, NPV, FOR, Accuracy, Prevalence). Live result display below each matrix. Saved metrics comparison table. Chip hover-reveal × button. Drag-to-delete via trash zone. No tutorial carousel — dashboard opens immediately. Research footer.
+Augmented confusion matrices (4×4 grid with marginals) for Black and White defendants. Ratio workspace with active-zone click model and drag-and-drop. Smart sum recognition via `normalizeCodes()`. Recognition against `data/metrics.json` (10 metrics: TPR, FNR, FPR, TNR, PPV, FDR, NPV, FOR, Accuracy, Prevalence). Live result display below each matrix. Saved metrics comparison table. Chip hover-reveal × button. Drag-to-delete via trash zone. Four-slide tutorial carousel (matches COMPAS pattern: `#explainer` section, `window.restartTutorial()`, slide card CSS, `sv-*` visualization classes). Research footer.
 
 ---
 
 ## Stretch Goals
 
 ### V2
-- Tutorial carousel (4 slides)
-- Compound ratios: named metrics become draggable chips (build LR+ = TPR/FPR)
+- Tutorial carousel (4 slides) ✓ done
+- Compound ratios: named metrics become draggable chips (build LR+ = TPR/FPR by dragging named chips)
 - Multiple chips of same type (build F1 = 2·TP / (2·TP+FP+FN))
-- Non-ratio metrics (Informedness = TPR+TNR−1)
 - Export/print the saved metrics table
 
 ### V3
