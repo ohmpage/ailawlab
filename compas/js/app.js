@@ -377,10 +377,8 @@ function render() {
 
 // ── Magic Wand enter / exit ──────────────────────────────────────────────────
 function enterWandMode() {
-  wandMode       = true;
-  thresholdBlack = threshold;
-  thresholdWhite = threshold;
-  accuracy       = 0;
+  wandMode = true;
+  accuracy = 0;
 
   document.getElementById('thresh-black-slider').value = thresholdBlack;
   document.getElementById('thresh-white-slider').value = thresholdWhite;
@@ -410,14 +408,14 @@ function exitWandMode() {
 }
 
 function resetWandDefaults() {
-  thresholdBlack = threshold;
-  thresholdWhite = threshold;
+  thresholdBlack = 5;
+  thresholdWhite = 5;
   baseRateBlack  = realBaseRateBlack;
   baseRateWhite  = realBaseRateWhite;
   accuracy       = 0;
 
-  document.getElementById('thresh-black-slider').value = thresholdBlack;
-  document.getElementById('thresh-white-slider').value = thresholdWhite;
+  document.getElementById('thresh-black-slider').value = 5;
+  document.getElementById('thresh-white-slider').value = 5;
   document.getElementById('br-black-slider').value     = Math.round(realBaseRateBlack * 100);
   document.getElementById('br-white-slider').value     = Math.round(realBaseRateWhite * 100);
   document.getElementById('accuracy-slider').value     = 0;
