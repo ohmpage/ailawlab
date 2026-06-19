@@ -385,13 +385,12 @@ function render() {
 // ── Magic Wand enter / exit ──────────────────────────────────────────────────
 function enterWandMode() {
   wandMode = true;
-  accuracy = 0;
 
   document.getElementById('thresh-black-slider').value = thresholdBlack;
   document.getElementById('thresh-white-slider').value = thresholdWhite;
   document.getElementById('br-black-slider').value     = Math.round(baseRateBlack * 100);
   document.getElementById('br-white-slider').value     = Math.round(baseRateWhite * 100);
-  document.getElementById('accuracy-slider').value     = 0;
+  document.getElementById('accuracy-slider').value     = Math.round(accuracy * 100);
 
   // Update visible base-rate labels to match pre-loaded slider values
   document.getElementById('br-black-val').textContent = `${Math.round(baseRateBlack * 100)}%`;
