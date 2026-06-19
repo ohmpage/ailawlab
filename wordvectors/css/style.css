@@ -65,34 +65,41 @@ header {
   align-items: center;
   justify-content: space-between;
 }
-header h1 { font-size: 1.1rem; font-weight: normal; letter-spacing: 0.02em; }
+header h1 { font-size: 1.1rem; font-weight: normal; letter-spacing: 0.02em; line-height: 1; }
 header h1 span { color: var(--red); }
 
 .byline {
   font-size: 0.8rem;
   font-family: sans-serif;
   color: #ccc;
+  line-height: 1;
+  margin: 0;
 }
 .byline a { color: #fff; text-decoration: none; }
 .byline a:hover { text-decoration: underline; }
 
-/* ── Header nav (right side) ──────────────────────────────────────────────── */
+/* ── Header layout ────────────────────────────────────────────────────────── */
+.hdr-left {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
 .header-nav {
   display: flex;
   align-items: center;
   gap: 1.25rem;
 }
-.header-nav .byline { margin: 0; }
 .header-back,
 .header-tutorial {
   font-size: 0.8rem;
   font-family: sans-serif;
-  color: #aaa;
+  color: #fff;
   text-decoration: none;
   white-space: nowrap;
+  line-height: 1;
 }
 .header-back:hover,
-.header-tutorial:hover { color: #fff; text-decoration: underline; }
+.header-tutorial:hover { text-decoration: underline; }
 
 /* ── Explainer ────────────────────────────────────────────────────────────── */
 #explainer {
