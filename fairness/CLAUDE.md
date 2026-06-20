@@ -133,6 +133,14 @@ Matching is by sorted set of codes — list order doesn't matter.
 
 **Print / Export**: `printMetrics()` opens a new window, writes a full HTML page, and calls `w.print()`. The dataset info block and the footer note are conditional on `currentDataset.id` — COMPAS datasets get the Chouldechova base-rate note; Emily & Greg gets an equal-base-rate note; Gender Shades gets a PPB-balance note.
 
+**Easter egg drawer**: `#metrics-drawer` is a hidden gold-pulsing card that slides open above the workspace when triggered. It lists all 11 recognized metrics as clickable chips; clicking one loads its numerator/denominator codes into the workspace exactly as if the student had clicked those cells manually — recognition and highlighting fire automatically. Three triggers:
+
+1. **Konami Code** — click the matrix as a D-pad: FP=↑, N=↓, FN=←, PN=→, A={TP or P}, B={PP or all}. Sequence: ↑↑↓↓←→←→BA.
+2. **8675309** (Tommy Tutone, 1981) — phone dialpad mapped to the matrix (TP=1 FP=2 PP=3 / FN=4 TN=5 PN=6 / P=7 N=8 all=9 / zone-click=0). Sequence: N→PN→P→TN→PP→[zone click]→all = 8-6-7-5-3-0-9.
+3. **All 9 cells explored** — fires automatically after a student clicks every distinct cell at least once. The chip is added normally on the 9th click; then the drawer opens. Resets on dataset switch.
+
+`clickHistory` (FIFO, 30 entries) tracks cell codes plus `'0'` for zone clicks. Sequence triggers consume the final click without adding a chip; the all-cells trigger does not consume. Adding new dialpad codes requires only a new `_SEQ` array and one added `||` condition in the cell-click handler. `cellsSeen` Set and `allCellsTriggered` flag reset in `switchDataset()`.
+
 ---
 
 ## Version History
@@ -144,7 +152,10 @@ Augmented confusion matrices (4×4 grid with marginals) for COMPAS Black and Whi
 Four-slide tutorial carousel added (matches COMPAS pattern: `#explainer`/`#main-app` visibility toggle, `window.restartTutorial()`, slide card CSS, `sv-*` visualization classes). Slide 4 covers the Kleinberg-Chouldechova impossibility theorem with live base-rate bars. Print / Export button opens a new window with a formatted metrics table and triggers the browser print dialog.
 
 ### Version 3 — June 2026
-Dataset switcher: four real-world datasets selectable via pill buttons. Each dataset carries its own `rowLabels`, `colLabels`, `rowBadges`, and `cellDescs`; `buildMatrixHTML()` reads from `currentDataset` so all matrix labels are fully dynamic. `switchDataset(i)` clears workspace and saved-table state on every switch. Dataset source line displayed beneath the selector. Positive Rate (PP/all) added as an 11th metric — the demographic parity / selection rate criterion, most directly relevant to Title VII disparate impact analysis. Research footer expanded with St. George's CRE report (1988), Bertrand & Mullainathan (2004), and Buolamwini & Gebru (2018). UI polish: slide title no longer overlaps Skip button; instruction hint moved between matrices and workspace and restyled as subtle centered text.
+Dataset switcher: four real-world datasets selectable via pill buttons. Each dataset carries its own `rowLabels`, `colLabels`, `rowBadges`, and `cellDescs`; `buildMatrixHTML()` reads from `currentDataset` so all matrix labels are fully dynamic. `switchDataset(i)` clears workspace and saved-table state on every switch. Dataset source line displayed beneath the selector. Positive Rate (PP/all) added as an 11th metric — the demographic parity / selection rate criterion, most directly relevant to Title VII disparate impact analysis. Research footer expanded with St. George's CRE report (1988), Bertrand & Mullainathan (2004), and Buolamwini & Gebru (2018). UI polish: slide title no longer overlaps Skip button; instruction hint moved between matrices and workspace and restyled as subtle centered text. Impossibility theorem attribution updated throughout to jointly credit Kleinberg, Mullainathan & Raghavan (2016) and Chouldechova (2017) as simultaneous independent discoverers.
+
+### Version 3.5 — June 2026
+Known Metrics drawer easter egg. A hidden gold-pulsing card (`#metrics-drawer`) slides open above the workspace showing all 11 recognized metrics as chips. Clicking a chip loads that metric into the workspace as if the student had clicked the cells manually. Three triggers: (1) Konami Code using the matrix as a D-pad; (2) 8675309 via a phone-dialpad mapping of the matrix cells (TP=1…all=9, zone-click=0); (3) automatic reveal after all 9 distinct cells have been clicked at least once. The dialpad scheme makes adding future numeric codes trivial.
 
 ---
 
