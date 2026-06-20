@@ -538,6 +538,7 @@ function switchDataset(i) {
 
   document.getElementById('th-group0').textContent = currentDataset.groups[0].name;
   document.getElementById('th-group1').textContent = currentDataset.groups[1].name;
+  document.getElementById('dataset-desc').textContent = currentDataset.source;
 
   document.querySelectorAll('.dataset-btn').forEach((btn, bi) => {
     btn.classList.toggle('active', bi === i);
@@ -713,6 +714,7 @@ document.querySelectorAll('.matrix-card').forEach((card, i) => {
 });
 document.getElementById('th-group0').textContent = currentDataset.groups[0].name;
 document.getElementById('th-group1').textContent = currentDataset.groups[1].name;
+document.getElementById('dataset-desc').textContent = currentDataset.source;
 
 // Wire up drop zones
 setupDropZone(document.getElementById('num-zone'), 'num');

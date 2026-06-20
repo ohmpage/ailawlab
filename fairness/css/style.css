@@ -7,14 +7,11 @@ main {
 
 .page-hint {
   font-family: sans-serif;
-  font-size: 0.875rem;
-  color: var(--muted);
-  background: var(--white);
-  border-left: 3px solid var(--navy);
-  border-radius: 0 var(--radius) var(--radius) 0;
-  padding: 0.75rem 1rem;
-  margin-bottom: 1.25rem;
-  box-shadow: var(--shadow);
+  font-size: 0.78rem;
+  color: #94a3b8;
+  text-align: center;
+  padding: 0.1rem 0;
+  margin: 0.25rem 0 0.75rem;
   line-height: 1.5;
 }
 
@@ -65,6 +62,15 @@ main {
   background: var(--navy);
   border-color: var(--navy);
   color: #fff;
+}
+
+.dataset-desc {
+  font-family: sans-serif;
+  font-size: 0.73rem;
+  color: #94a3b8;
+  font-style: italic;
+  margin: -0.35rem 0 1rem;
+  line-height: 1.4;
 }
 
 /* ── Matrices row ────────────────────────────────────────────────────────── */
@@ -716,6 +722,7 @@ main {
 .slide-card h2 {
   font-size: 1.35rem;
   color: var(--navy);
+  margin-top: 1.75rem;
   margin-bottom: 0.75rem;
   line-height: 1.3;
 }

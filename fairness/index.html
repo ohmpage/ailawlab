@@ -36,11 +36,6 @@
 <!-- ── Main app (hidden until explainer done) ─────────────────────────────── -->
 <main id="main-app" class="hidden">
 
-  <p class="page-hint">
-    Click or drag any cell from either confusion matrix into the workspace below to build a fairness metric.
-    When you assemble a known metric, the app will name it and explain its significance.
-  </p>
-
   <!-- ── Dataset selector ─────────────────────────────────────────────────── -->
   <div class="dataset-selector">
     <span class="dataset-selector-label">Dataset:</span>
@@ -51,6 +46,7 @@
       <button class="dataset-btn"        data-index="3">Emily &amp; Greg</button>
     </div>
   </div>
+  <p class="dataset-desc" id="dataset-desc"></p>
 
   <!-- ── Confusion matrices ────────────────────────────────────────────────── -->
   <div class="matrices-row">
@@ -69,6 +65,12 @@
       <div class="live-result" data-group="1"></div>
     </div>
   </div>
+
+  <!-- ── Instruction bridge ───────────────────────────────────────────────── -->
+  <p class="page-hint">
+    Click or drag any cell from either confusion matrix into the workspace below to build a fairness metric.
+    When you assemble a known metric, the app will name it and explain its significance.
+  </p>
 
   <!-- ── Ratio workspace ──────────────────────────────────────────────────── -->
   <div class="workspace-card">
