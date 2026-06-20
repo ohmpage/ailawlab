@@ -247,11 +247,51 @@ function normalizeCodes(codes) {
 }
 
 // ── State ─────────────────────────────────────────────────────────────────────
-let numCodes   = [];    // cell codes in the numerator zone
-let denCodes   = [];    // cell codes in the denominator zone
-let activeZone = 'num'; // which zone receives clicks on matrix cells
-let metricsDb  = [];    // loaded from data/metrics.json
-let savedRows  = [];    // { name, formula, values: [v0, v1] }
+let numCodes      = [];    // cell codes in the numerator zone
+let denCodes      = [];    // cell codes in the denominator zone
+let activeZone    = 'num'; // which zone receives clicks on matrix cells
+let metricsDb     = [];    // loaded from data/metrics.json
+let savedRows     = [];    // { name, formula, values: [v0, v1] }
+let clickHistory      = [];        // FIFO of cell codes + '0' for zone clicks; used by all easter eggs
+let cellsSeen         = new Set(); // accumulates unique cell codes clicked this dataset
+let allCellsTriggered = false;     // gates the "all 9 cells" trigger to fire once per dataset
+
+// ── Easter egg sequences ──────────────────────────────────────────────────────
+// Phone dialpad layout (mirrors the matrix):
+//   TP=1  FP=2  PP=3
+//   FN=4  TN=5  PN=6
+//   P=7   N=8   all=9   zone-click=0
+//
+// Konami D-pad: fp=↑  n=↓  fn=←  pn=→   A={tp,p}   B={pp,all}
+const KONAMI_SEQ = [
+  ['fp'], ['fp'],
+  ['n'],  ['n'],
+  ['fn'], ['pn'],
+  ['fn'], ['pn'],
+  ['pp', 'all'],
+  ['tp', 'p'],
+];
+
+// 8-6-7-5-3-0-9  (Tommy Tutone, 1981)
+const JENNY_SEQ = ['n', 'pn', 'p', 'tn', 'pp', '0', 'all'];
+
+const ALL_CELL_CODES = new Set(['tp','fp','fn','tn','p','n','pp','pn','all']);
+
+function drawerIsOpen() {
+  return document.getElementById('metrics-drawer').classList.contains('open');
+}
+
+function checkKonami() {
+  if (clickHistory.length < KONAMI_SEQ.length) return false;
+  const tail = clickHistory.slice(-KONAMI_SEQ.length);
+  return KONAMI_SEQ.every((valid, i) => valid.includes(tail[i]));
+}
+
+function checkJenny() {
+  if (clickHistory.length < JENNY_SEQ.length) return false;
+  const tail = clickHistory.slice(-JENNY_SEQ.length);
+  return JENNY_SEQ.every((code, i) => code === tail[i]);
+}
 
 // ── Zone helpers ──────────────────────────────────────────────────────────────
 const zoneOf = code =>
@@ -532,6 +572,7 @@ ${footerNote}
 function switchDataset(i) {
   currentDataset = DATASETS[i];
   numCodes = []; denCodes = []; savedRows = [];
+  cellsSeen = new Set(); allCellsTriggered = false;
 
   document.querySelectorAll('.matrix-card').forEach((card, gi) => {
     card.querySelector('.group-name').textContent = currentDataset.groups[gi].name;
@@ -560,8 +601,41 @@ function render() {
   });
 }
 
+// ── Answer key drawer ─────────────────────────────────────────────────────────
+function buildDrawer() {
+  const container = document.getElementById('drawer-chips');
+  container.innerHTML = metricsDb.map(m =>
+    `<button class="drawer-chip" data-metric-id="${m.id}" type="button">${m.names[0]}</button>`
+  ).join('');
+}
+
+window.openAnswerKey = function () {
+  buildDrawer();
+  document.getElementById('metrics-drawer').classList.add('open');
+};
+
+function closeAnswerKey() {
+  document.getElementById('metrics-drawer').classList.remove('open');
+}
+
 // ── Event handling ────────────────────────────────────────────────────────────
 document.addEventListener('click', e => {
+  // Drawer chip click → load metric into workspace
+  const drawerChip = e.target.closest('.drawer-chip');
+  if (drawerChip) {
+    const metric = metricsDb.find(m => m.id === drawerChip.dataset.metricId);
+    if (metric) {
+      numCodes = [...metric.numerator];
+      denCodes = [...metric.denominator];
+      activeZone = 'num';
+      render();
+    }
+    return;
+  }
+
+  // Drawer close button
+  if (e.target.id === 'btn-drawer-close') { closeAnswerKey(); return; }
+
   // Chip × button (must check before mat-cell, since chips live inside zones not matrices)
   const chipX = e.target.closest('.chip-x');
   if (chipX) {
@@ -573,11 +647,31 @@ document.addEventListener('click', e => {
 
   // Matrix cell click → add to / remove from active zone
   const cell = e.target.closest('.mat-cell[data-code]');
-  if (cell) { clickCell(cell.dataset.code); return; }
+  if (cell) {
+    const code = cell.dataset.code;
+    clickHistory.push(code);
+    if (clickHistory.length > 30) clickHistory.shift();
+    cellsSeen.add(code);
+    // Sequence-based triggers consume the click (no chip added)
+    if (!drawerIsOpen() && (checkKonami() || checkJenny())) {
+      clickHistory = [];
+      openAnswerKey();
+      return;
+    }
+    clickCell(code);
+    // "All 9 cells seen" fires after the chip is added, non-consuming
+    if (!allCellsTriggered && cellsSeen.size === ALL_CELL_CODES.size) {
+      allCellsTriggered = true;
+      openAnswerKey();
+    }
+    return;
+  }
 
-  // Zone wrapper click → activate that zone
+  // Zone wrapper click → activate that zone; '0' on the dialpad
   const zoneWrap = e.target.closest('.zone-wrapper');
-  if (zoneWrap && !e.target.closest('.chip-x')) {
+  if (zoneWrap && !e.target.closest('.chip-x') && !e.target.closest('.chip')) {
+    clickHistory.push('0');
+    if (clickHistory.length > 30) clickHistory.shift();
     activeZone = zoneWrap.dataset.zone;
     render(); return;
   }
