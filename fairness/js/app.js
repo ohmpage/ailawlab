@@ -252,9 +252,8 @@ let denCodes      = [];    // cell codes in the denominator zone
 let activeZone    = 'num'; // which zone receives clicks on matrix cells
 let metricsDb     = [];    // loaded from data/metrics.json
 let savedRows     = [];    // { name, formula, values: [v0, v1] }
-let clickHistory      = [];        // FIFO of cell codes + '0' for zone clicks; used by all easter eggs
-let cellsSeen         = new Set(); // accumulates unique cell codes clicked this dataset
-let allCellsTriggered = false;     // gates the "all 9 cells" trigger to fire once per dataset
+let clickHistory = [];        // FIFO of cell codes + '0' for zone clicks; used by all easter eggs
+let cellsSeen    = new Set(); // accumulates unique cell codes clicked; resets after triggering drawer
 
 // ── Easter egg sequences ──────────────────────────────────────────────────────
 // Phone dialpad layout (mirrors the matrix):
@@ -572,7 +571,7 @@ ${footerNote}
 function switchDataset(i) {
   currentDataset = DATASETS[i];
   numCodes = []; denCodes = []; savedRows = [];
-  cellsSeen = new Set(); allCellsTriggered = false;
+  cellsSeen = new Set();
 
   document.querySelectorAll('.matrix-card').forEach((card, gi) => {
     card.querySelector('.group-name').textContent = currentDataset.groups[gi].name;
@@ -659,9 +658,9 @@ document.addEventListener('click', e => {
       return;
     }
     clickCell(code);
-    // "All 9 cells seen" fires after the chip is added, non-consuming
-    if (!allCellsTriggered && cellsSeen.size === ALL_CELL_CODES.size) {
-      allCellsTriggered = true;
+    // "All 9 cells seen" fires after the chip is added, non-consuming; resets so it can retrigger
+    if (!drawerIsOpen() && cellsSeen.size === ALL_CELL_CODES.size) {
+      cellsSeen = new Set();
       openAnswerKey();
     }
     return;
