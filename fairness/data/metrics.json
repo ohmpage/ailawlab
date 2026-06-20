@@ -67,6 +67,14 @@
       "sources": ["Wikipedia: False Omission Rate"]
     },
     {
+      "id": "positive-rate",
+      "names": ["Positive Rate", "Selection Rate", "Demographic Parity (criterion)"],
+      "numerator": ["pp"],
+      "denominator": ["all"],
+      "commentary": "What fraction of defendants in this group were scored High Risk at all? In COMPAS, roughly 59% of Black defendants and 35% of White defendants received a High Risk score. This is the metric at the center of Title VII disparate impact analysis: if a selection process (hiring, lending, bail) flags members of a protected class at a substantially lower rate, that is prima facie evidence of disparate impact regardless of whether the underlying predictions are accurate. The 'four-fifths rule' in EEOC guidance defines adverse impact as a selection rate for one group less than 80% of the rate for the highest-selected group.",
+      "sources": ["Wikipedia: Demographic Parity", "EEOC Uniform Guidelines (29 C.F.R. § 1607)", "Narayanan 2018 (Statistical Parity)"]
+    },
+    {
       "id": "acc",
       "names": ["Accuracy", "Overall Accuracy"],
       "numerator": ["tp", "tn"],
