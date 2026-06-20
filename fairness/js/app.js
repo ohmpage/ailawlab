@@ -60,8 +60,9 @@ const SLIDES = [
   },
   {
     title: 'Some definitions can\'t coexist',
-    body:  'Alexandra Chouldechova proved in 2017 that when two groups have different underlying reoffense rates ' +
-           'and the algorithm is calibrated, no classifier can <strong>simultaneously</strong> equalize ' +
+    body:  'Kleinberg, Mullainathan &amp; Raghavan (2016) and Chouldechova (2017) independently proved that ' +
+           'when two groups have different underlying reoffense rates and the algorithm is calibrated, ' +
+           'no classifier can <strong>simultaneously</strong> equalize ' +
            'False Positive Rate, False Negative Rate, and Positive Predictive Value. ' +
            'The two groups here have different base rates. Build all three metrics and watch them diverge.',
     viz: `<div class="sv-bars">
@@ -77,7 +78,7 @@ const SLIDES = [
       </div>
       <div class="sv-bar-caption">Actual two-year reoffense rate — Broward County, FL, 2013–2014</div>
     </div>
-    <p class="sv-note">Build FPR (FP÷N), FNR (FN÷P), and PPV (TP÷PP). Chouldechova's theorem guarantees they can't all be equal when base rates differ.</p>`,
+    <p class="sv-note">Build FPR (FP÷N), FNR (FN÷P), and PPV (TP÷PP). This impossibility result guarantees they can't all be equal when base rates differ.</p>`,
   },
 ];
 
@@ -453,7 +454,8 @@ function printMetrics() {
 
   const footerNote = currentDataset.id.startsWith('compas')
     ? `<p class="note">
-        Chouldechova (2017): when two groups have different underlying reoffense rates and the algorithm is calibrated,
+        Kleinberg, Mullainathan &amp; Raghavan (2016) and Chouldechova (2017) independently proved that when two groups
+        have different underlying reoffense rates and the algorithm is calibrated,
         no classifier can simultaneously equalize False Positive Rate, False Negative Rate, and Positive Predictive Value.
         ${currentDataset.id === 'compas-race'
           ? 'Black and White defendants in this dataset have base rates of approximately 51% and 39%, respectively.'
@@ -462,7 +464,7 @@ function printMetrics() {
     : currentDataset.id === 'emily-greg'
     ? `<p class="note">
         Because résumé quality was randomized 50/50 across both groups, the base rates are equal by design.
-        Chouldechova&apos;s impossibility theorem does not apply. Any gap in callback rate between groups is direct evidence of
+        The Kleinberg-Chouldechova impossibility theorem does not apply. Any gap in callback rate between groups is direct evidence of
         disparate treatment: employers treated identical credentials differently based on the applicant&apos;s perceived race.
       </p>`
     : `<p class="note">

@@ -23,8 +23,8 @@
       "names": ["False Positive Rate", "Fall-out", "Type I Error Rate", "False Alarm Rate"],
       "numerator": ["fp"],
       "denominator": ["n"],
-      "commentary": "Of defendants who did NOT reoffend, what fraction were scored High Risk anyway? This is ProPublica's central finding: Black defendants in the COMPAS dataset had a False Positive Rate of about 45%, compared to 24% for White defendants — nearly double. These are real people who would not have reoffended but were labeled high-risk. Chouldechova (2017) proved that when base rates differ and the algorithm is calibrated, the FPR disparity is mathematically unavoidable.",
-      "sources": ["Wikipedia: False Positive Rate", "Angwin et al. 2016 (Machine Bias)", "Chouldechova 2017"]
+      "commentary": "Of defendants who did NOT reoffend, what fraction were scored High Risk anyway? This is ProPublica's central finding: Black defendants in the COMPAS dataset had a False Positive Rate of about 45%, compared to 24% for White defendants — nearly double. These are real people who would not have reoffended but were labeled high-risk. Kleinberg, Mullainathan & Raghavan (2016) and Chouldechova (2017) independently proved that when base rates differ and the algorithm is calibrated, the FPR disparity is mathematically unavoidable.",
+      "sources": ["Wikipedia: False Positive Rate", "Angwin et al. 2016 (Machine Bias)", "Kleinberg, Mullainathan & Raghavan 2016", "Chouldechova 2017"]
     },
     {
       "id": "tnr",
@@ -39,8 +39,8 @@
       "names": ["Positive Predictive Value", "Precision", "Predictive Parity (criterion)"],
       "numerator": ["tp"],
       "denominator": ["pp"],
-      "commentary": "Of defendants scored High Risk, what fraction actually reoffended? This is Northpointe's standard — 'predictive parity' or 'calibration within groups': a High Risk score should mean the same thing regardless of race. Northpointe demonstrated COMPAS satisfies this approximately. Chouldechova (2017) proved that when base rates differ, you cannot simultaneously have equal PPV and equal FPR — this is the mathematical core of the ProPublica vs. Northpointe dispute.",
-      "sources": ["Wikipedia: Positive Predictive Value", "Northpointe/Dieterich 2016", "Chouldechova 2017"]
+      "commentary": "Of defendants scored High Risk, what fraction actually reoffended? This is Northpointe's standard — 'predictive parity' or 'calibration within groups': a High Risk score should mean the same thing regardless of race. Northpointe demonstrated COMPAS satisfies this approximately. Kleinberg, Mullainathan & Raghavan (2016) and Chouldechova (2017) independently proved that when base rates differ, you cannot simultaneously have equal PPV and equal FPR — this is the mathematical core of the ProPublica vs. Northpointe dispute.",
+      "sources": ["Wikipedia: Positive Predictive Value", "Northpointe/Dieterich 2016", "Kleinberg, Mullainathan & Raghavan 2016", "Chouldechova 2017"]
     },
     {
       "id": "fdr",
@@ -87,8 +87,8 @@
       "names": ["Prevalence", "Base Rate", "Prior Probability"],
       "numerator": ["p"],
       "denominator": ["all"],
-      "commentary": "What fraction of all defendants in this group actually reoffended? This is the underlying recidivism rate — the base rate. Chouldechova (2017) proved that when this rate differs between groups, a well-calibrated algorithm cannot simultaneously equalize FPR and FNR. In COMPAS, the Black base rate (~51%) is substantially higher than the White base rate (~39%). This difference is the mathematical root of the fairness impossibility.",
-      "sources": ["Wikipedia: Prevalence", "Chouldechova 2017"]
+      "commentary": "What fraction of all defendants in this group actually reoffended? This is the underlying recidivism rate — the base rate. Kleinberg, Mullainathan & Raghavan (2016) and Chouldechova (2017) independently proved that when this rate differs between groups, a well-calibrated algorithm cannot simultaneously equalize FPR and FNR. In COMPAS, the Black base rate (~51%) is substantially higher than the White base rate (~39%). This difference is the mathematical root of the fairness impossibility.",
+      "sources": ["Wikipedia: Prevalence", "Kleinberg, Mullainathan & Raghavan 2016", "Chouldechova 2017"]
     }
   ]
 }
