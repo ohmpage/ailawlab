@@ -17,6 +17,22 @@
 
 html { font-size: 16px; scroll-behavior: smooth; }
 
+/* ── Footer ──────────────────────────────────────────────────────────────── */
+#site-footer {
+  background: var(--navy);
+  color: rgba(255,255,255,0.70);
+  font-family: sans-serif;
+  font-size: 0.72rem;
+  line-height: 1.5;
+  padding: 0.65rem 2rem;
+  text-align: center;
+  flex-shrink: 0;
+}
+#site-footer p { margin: 0.1rem 0; }
+#site-footer a { color: rgba(255,255,255,0.85); text-decoration: none; }
+#site-footer a:hover { text-decoration: underline; }
+#site-footer em { font-style: italic; }
+
 body {
   font-family: Georgia, 'Times New Roman', serif;
   background: var(--bg);
