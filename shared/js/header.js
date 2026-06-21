@@ -7,7 +7,7 @@
   el.innerHTML =
     '<div class="hdr-left">' +
       '<h1>' + (cfg.h1 || 'AI Law') + '</h1>' +
-      '<p class="byline">by <a href="https://www.paulohm.com/">Paul Ohm</a></p>' +
+      '<p class="byline">by <a href="https://www.paulohm.com/">Paul Ohm</a> using Claude Code</p>' +
     '</div>' +
     '<nav class="header-nav">' +
       '<a href="#" id="hdr-tutorial" class="header-tutorial">Tutorial</a>' +

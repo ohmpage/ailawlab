@@ -4,7 +4,7 @@
   if (!el) return;
 
   el.innerHTML =
-    '<p>AI Law Tools created by <a href="https://www.paulohm.com/">Paul Ohm</a>.</p>' +
+    '<p>AI Law Tools created by <a href="https://www.paulohm.com/">Paul Ohm</a> using Claude Code.</p>' +
     '<p>Released (as an independent project) in conjunction with the publication<br>' +
     'by Margot Kaminski, Paul Ohm, and Andrew Selbst of ' +
     '<a href="https://aila.ws/"><em>Artificial Intelligence Law</em></a> ' +
