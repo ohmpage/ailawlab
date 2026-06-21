@@ -5,8 +5,8 @@
 
   el.innerHTML =
     '<p>AI Law Tools created by <a href="https://www.paulohm.com/">Paul Ohm</a>.</p>' +
-    '<p>Released (as an independent project) in conjunction with the publication by ' +
-    'Margot Kaminski, Paul Ohm, and Andrew Selbst of ' +
+    '<p>Released (as an independent project) in conjunction with the publication<br>' +
+    'by Margot Kaminski, Paul Ohm, and Andrew Selbst of ' +
     '<a href="https://aila.ws/"><em>Artificial Intelligence Law</em></a> ' +
     '(<a href="https://faculty.westacademic.com/Book/Detail?id=358012">Foundation Press University Casebook Series 2026</a>).</p>' +
     '<p><a href="https://github.com/ohmpage/ailawlab">GitHub repo</a></p>' +
