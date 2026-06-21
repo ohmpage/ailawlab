@@ -393,3 +393,19 @@ header h1 span { color: var(--red); }
 .paper-link a { color: #7ecfff; text-decoration: none; }
 .paper-link a:hover { text-decoration: underline; }
 .paper-link .venue { color: #999; font-style: italic; }
+
+/* ── Site footer ─────────────────────────────────────────────────────────── */
+#site-footer {
+  background: var(--navy);
+  color: rgba(255,255,255,0.70);
+  font-family: sans-serif;
+  font-size: 0.82rem;
+  line-height: 1.5;
+  padding: 0.65rem 2rem;
+  text-align: center;
+  flex-shrink: 0;
+}
+#site-footer p { margin: 0.1rem 0; }
+#site-footer a { color: rgba(255,255,255,0.85); text-decoration: none; }
+#site-footer a:hover { text-decoration: underline; }
+#site-footer em { font-style: italic; }
