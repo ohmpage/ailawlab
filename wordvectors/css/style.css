@@ -402,10 +402,21 @@ header h1 span { color: var(--gold); }
   font-size: 0.8rem;
   line-height: 1.5;
   padding: 0.65rem 2rem;
-  text-align: center;
   flex-shrink: 0;
 }
+.footer-inner {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 2rem;
+}
+.footer-left { flex: 1; }
+.footer-right { text-align: right; flex-shrink: 0; }
 #site-footer p { margin: 0.1rem 0; }
 #site-footer a { color: rgba(255,255,255,0.85); text-decoration: none; }
 #site-footer a:hover { text-decoration: underline; }
 #site-footer em { font-style: italic; }
+@media (max-width: 600px) {
+  .footer-inner { flex-direction: column; gap: 0.3rem; }
+  .footer-right { text-align: left; }
+}
