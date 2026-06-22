@@ -25,7 +25,7 @@ var SLIDES = [
     body:  "After each forward pass the network compares its output to the correct answer. " +
            "The error flows <em>backward</em> through the network, nudging each weight slightly in the direction that reduces the mistake. " +
            "Repeat this thousands of times across many examples and the network gradually gets it right. " +
-           "Nodes glow <span style='color:#c4162a;font-weight:600'>red</span> during this correction step.",
+           "Nodes glow <span style='color:#f5a623;font-weight:600'>gold</span> during this correction step.",
     draw:  drawSlide3
   },
   {
@@ -100,19 +100,19 @@ function drawSlide3(container) {
   var svg = makeSVG(560, 130);
   var layers = [[65,65],[200,40],[200,90],[335,65]];
   var r = 18;
-  var nodeColors = ['#555','#c4162a','#555','#c4162a'];
+  var nodeColors = ['#555','#f5a623','#555','#f5a623'];
   var edges = [[0,1],[0,2],[1,3],[2,3]];
   // draw backward arrow decoration
-  appendSVG(svg,'text',{x:220,y:120,'text-anchor':'middle',fill:'#c4162a',
+  appendSVG(svg,'text',{x:220,y:120,'text-anchor':'middle',fill:'#f5a623',
     'font-size':'11','font-family':'sans-serif','font-style':'italic'},'Error flows backward — weights adjust');
   edges.forEach(function(e){
     var a=layers[e[0]],b=layers[e[1]];
     appendSVG(svg,'line',{x1:b[0]-r,y1:b[1],x2:a[0]+r,y2:a[1],
-      stroke:'#c4162a','stroke-width':1.5,'stroke-dasharray':'4,3',
-      'marker-end':'url(#arrowRed)'});
+      stroke:'#f5a623','stroke-width':1.5,'stroke-dasharray':'4,3',
+      'marker-end':'url(#arrowGold)'});
     var mx=(a[0]+b[0])/2, my=(a[1]+b[1])/2;
-    appendSVG(svg,'rect',{x:mx-18,y:my-8,width:36,height:16,rx:4,fill:'#fff',stroke:'#c4162a','stroke-width':1});
-    appendSVG(svg,'text',{x:mx,y:my+4.5,'text-anchor':'middle',fill:'#c4162a',
+    appendSVG(svg,'rect',{x:mx-18,y:my-8,width:36,height:16,rx:4,fill:'#fff',stroke:'#f5a623','stroke-width':1});
+    appendSVG(svg,'text',{x:mx,y:my+4.5,'text-anchor':'middle',fill:'#f5a623',
       'font-size':'10','font-family':'sans-serif','font-weight':'700'},'0.38');
   });
   layers.forEach(function(pos,i){
@@ -590,7 +590,7 @@ function applyStepScopeColors() {
     netLayers.forEach(function(layer){
       layer.forEach(function(n){
         if (n.id === nodeId) {
-          n._activeColor = phase === 'ff' ? '#27ae60' : '#c4162a';
+          n._activeColor = phase === 'ff' ? '#27ae60' : '#f5a623';
         }
       });
     });
@@ -1096,7 +1096,7 @@ var TOUR_STEPS = [
       '<strong>Hidden nodes</strong> compute a weighted sum of their inputs plus a bias, ' +
       'then compress the result into a value between 0 and 1. ' +
       'A node glows <span style="color:#27ae60;font-weight:600">green</span> during the forward pass and ' +
-      '<span style="color:#c4162a;font-weight:600">red</span> during backpropagation.'
+      '<span style="color:#f5a623;font-weight:600">gold</span> during backpropagation.'
     ); }
   },
   {
