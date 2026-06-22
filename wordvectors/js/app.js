@@ -287,9 +287,9 @@ const WORD_POS = {
 
 const COLORS = {
   node: '#1a1a2e',
-  arrow: '#e94560',
+  arrow: '#c4162a',
   arrowAlt: '#0f3460',
-  highlight: '#e94560',
+  highlight: '#c4162a',
   predict: '#f5a623',
   gridLine: '#e0e0e0',
 };
@@ -626,7 +626,7 @@ function drawAnalogyViz(wA, wB, wC, wD) {
   // ── Two parallel arrows ───────────────────────────────────────────────────────
   const nodeR     = 17;
   const labels    = [wA.word, wB.word, wC.word, wD.word];
-  const nodeFills = ['#fff',    '#fff',    '#fff',    '#e94560'];
+  const nodeFills = ['#fff',    '#fff',    '#fff',    '#c4162a'];
   const textFills = ['#1a1a2e', '#1a1a2e', '#1a1a2e', '#fff'   ];
 
   function arrowLine(x1, y1, x2, y2, r1, r2) {

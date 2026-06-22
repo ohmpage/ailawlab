@@ -800,7 +800,7 @@ main.wand-mode .group-header h2::after {
   padding: 0.7rem 0.85rem;
   font-family: sans-serif;
 }
-.sv-stat-box.sv-red  { background: rgba(233,69,96,0.06);  border-left: 3px solid var(--red); }
+.sv-stat-box.sv-red  { background: rgba(196,22,42,0.06);  border-left: 3px solid var(--red); }
 .sv-stat-box.sv-blue { background: rgba(15,52,96,0.06);   border-left: 3px solid var(--blue); }
 .sv-stat-label {
   font-size: 0.68rem; font-weight: 700;

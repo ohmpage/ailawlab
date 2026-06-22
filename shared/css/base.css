@@ -3,7 +3,7 @@
 
 :root {
   --navy:   #1a1a2e;
-  --red:    #e94560;
+  --red:    #c4162a;
   --blue:   #0f3460;
   --gold:   #f5a623;
   --bg:     #f7f6f3;
@@ -52,8 +52,8 @@ header {
   align-items: center;
   justify-content: space-between;
 }
-header h1 { font-size: 1.1rem; font-weight: normal; letter-spacing: 0.02em; line-height: 1; }
-header h1 span { color: var(--red); }
+header h1 { font-size: 1.2rem; font-weight: normal; letter-spacing: 0.02em; line-height: 1; }
+header h1 span { color: var(--gold); }
 
 .byline {
   font-size: 0.8rem;
