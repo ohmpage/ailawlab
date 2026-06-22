@@ -1001,3 +1001,9 @@ main {
   .cell-count { font-size: 1.35rem; }
   .mat-marginal .cell-count { font-size: 1.1rem; }
 }
+
+@media (max-width: 600px) {
+  .metrics-drawer.open { max-height: 600px; }
+  .drawer-inner { flex-direction: column; gap: 0.5rem; }
+  .drawer-label { padding-top: 0; white-space: normal; }
+}
