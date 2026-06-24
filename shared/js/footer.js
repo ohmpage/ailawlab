@@ -3,8 +3,7 @@
   var el = document.getElementById('site-footer');
   if (!el) return;
 
-  var parts = window.location.pathname.replace(/\/index\.html$/, '/').replace(/\/$/, '').split('/').filter(Boolean);
-  var root = parts.length === 0 ? '' : '../';
+  var root = (window.APP_HEADER && window.APP_HEADER.root) || '';
 
   el.innerHTML =
     '<div class="footer-inner">' +
