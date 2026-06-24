@@ -109,11 +109,25 @@ header h1 span { color: var(--gold); }
 }
 
 .slide-card {
+  position: relative;
   background: var(--white);
   border-radius: var(--radius);
   box-shadow: var(--shadow);
   padding: 2rem 2.5rem;
 }
+.skip-btn {
+  position: absolute;
+  top: 1.25rem;
+  right: 1.5rem;
+  background: none;
+  border: none;
+  color: #94a3b8;
+  font-size: 0.82rem;
+  font-family: sans-serif;
+  cursor: pointer;
+  padding: 0.25rem 0.5rem;
+}
+.skip-btn:hover { color: #64748b; }
 
 .slide-card h2 {
   font-size: 1.5rem;
@@ -149,8 +163,6 @@ header h1 span { color: var(--gold); }
 #btn-prev:disabled { opacity: 0.4; cursor: default; }
 #btn-next { background: var(--navy); color: #fff; }
 #btn-next:hover { background: var(--blue); }
-#btn-skip { background: transparent; color: var(--muted); border: 1px solid var(--border) !important; }
-#btn-skip:hover { color: var(--text); border-color: #aaa !important; }
 
 .dots { display: flex; gap: 6px; margin-left: auto; }
 .dot {
