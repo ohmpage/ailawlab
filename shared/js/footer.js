@@ -6,7 +6,7 @@
   el.innerHTML =
     '<div class="footer-inner">' +
       '<div class="footer-left">' +
-        '<p>AI Law Tools by <a href="https://www.paulohm.com/">Paul Ohm</a> using Claude Code.</p>' +
+        '<p>AI Law Lab: Tools by <a href="https://www.paulohm.com/">Paul Ohm</a> using Claude Code.</p>' +
         '<p>Released as an independent project for use with ' +
         '<a href="https://aila.ws/"><em>Artificial Intelligence Law</em></a>, ' +
         'Kaminski, Ohm &amp; Selbst ' +
