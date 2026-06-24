@@ -3,6 +3,9 @@
   var el = document.getElementById('site-footer');
   if (!el) return;
 
+  var parts = window.location.pathname.replace(/\/index\.html$/, '/').replace(/\/$/, '').split('/').filter(Boolean);
+  var root = parts.length === 0 ? '' : '../';
+
   el.innerHTML =
     '<div class="footer-inner">' +
       '<div class="footer-left">' +
@@ -13,6 +16,8 @@
         '(<a href="https://faculty.westacademic.com/Book/Detail?id=358012">Foundation Press 2026</a>).</p>' +
       '</div>' +
       '<div class="footer-right">' +
+        '<p><a href="' + root + 'about/">About</a></p>' +
+        '<p><a href="' + root + 'credits/">Credits</a></p>' +
         '<p><a href="https://github.com/ohmpage/ailawlab">github repo</a></p>' +
         '<p><a href="mailto:ohm@law.georgetown.edu">Suggestions?</a></p>' +
       '</div>' +
