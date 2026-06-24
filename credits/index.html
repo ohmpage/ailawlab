@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Credits — AI Law Lab</title>
+  <link rel="stylesheet" href="../shared/css/base.css">
+  <style>
+    .prose {
+      max-width: 680px;
+      margin: 3rem auto;
+      padding: 0 1.5rem 4rem;
+    }
+    .prose > p.lede {
+      font-size: 1rem;
+      line-height: 1.75;
+      color: #334155;
+      margin-bottom: 2rem;
+    }
+    .credit-group {
+      margin-bottom: 2.5rem;
+    }
+    .credit-group h2 {
+      font-size: 1rem;
+      font-family: sans-serif;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      color: #94a3b8;
+      margin-bottom: 1.25rem;
+      padding-bottom: 0.4rem;
+      border-bottom: 1px solid #e2e8f0;
+    }
+    .credit-item {
+      margin-bottom: 1.5rem;
+    }
+    .credit-item h3 {
+      font-size: 1.05rem;
+      color: var(--navy);
+      margin-bottom: 0.35rem;
+    }
+    .credit-item h3 a { color: var(--navy); }
+    .credit-item h3 a:hover { color: var(--blue); }
+    .credit-item .byline {
+      font-family: sans-serif;
+      font-size: 0.82rem;
+      color: var(--muted);
+      margin-bottom: 0.5rem;
+      display: block;
+      line-height: 1;
+    }
+    .credit-item p {
+      font-size: 0.95rem;
+      line-height: 1.7;
+      color: #334155;
+      margin: 0;
+    }
+    .prose a { color: var(--blue); }
+  </style>
+</head>
+<body>
+
+<header id="site-header"></header>
+<script>window.APP_HEADER = { h1: 'Credits', hideTutorial: true, root: '../' };</script>
+<script src="../shared/js/header.js"></script>
+
+<main class="prose">
+  <p class="lede">Each tool was inspired by existing interactive demos. This page credits the work that shaped what we built — focusing on apps and interfaces, not academic papers.</p>
+
+  <div class="credit-group">
+    <h2>Neural Network Trainer</h2>
+
+    <div class="credit-item">
+      <h3><a href="https://experiments.mostafa.io/public/ffbpann/">interactive-bpann</a></h3>
+      <span class="byline">Mostafa Abdelraouf — <a href="https://github.com/drdrsh/interactive-bpann">github.com/drdrsh/interactive-bpann</a> — MIT license</span>
+      <p>The Neural Network Trainer is a reskin and substantial extension of Mostafa's work. The core math — feedforward pass, backpropagation, and the ES6 generator-based step-by-step training loop — is adapted directly from his code, as are the key UX concepts: five stepping granularities (node, layer, example, epoch, full run) and the green/gold node color convention for forward pass vs. backpropagation. What this version adds: a canvas renderer, weight-pill labels on edges, a four-slide explainer, a guided tour, and a full visual redesign.</p>
+    </div>
+  </div>
+
+  <div class="credit-group">
+    <h2>Word Vectors &amp; Bias</h2>
+
+    <div class="credit-item">
+      <h3><a href="https://chanind.github.io/word2vec-gender-bias-explorer/">Word2Vec Gender Bias Explorer</a></h3>
+      <span class="byline">chanind — <a href="https://github.com/chanind/word2vec-gender-bias-explorer">github.com/chanind/word2vec-gender-bias-explorer</a></span>
+      <p>The closest existing tool to what we built. Its core interaction — type a word, instantly see a bias result — is the right model for a non-technical audience. Our tool extends this to arbitrary analogies (A is to B as C is to ?) and connects the results explicitly to legal and policy contexts.</p>
+    </div>
+
+    <div class="credit-item">
+      <h3><a href="https://projector.tensorflow.org/">TensorFlow Embedding Projector</a></h3>
+      <span class="byline">Google Brain team</span>
+      <p>Demonstrated that high-dimensional word embeddings could be explored meaningfully in a browser with no server and no installation. The right deployment model — though its interface assumes a technical facilitator to interpret the 3D clusters.</p>
+    </div>
+
+    <div class="credit-item">
+      <h3><a href="https://learn.ml5js.org/">ml5.js</a></h3>
+      <span class="byline">NYU ITP / Processing Foundation</span>
+      <p>Proved the fully-browser-side, zero-install approach was viable for word vector demos. A student can open a URL, wait a few seconds, and start exploring — no Python, no Jupyter, no accounts.</p>
+    </div>
+  </div>
+
+  <div class="credit-group">
+    <h2>COMPAS Risk Score Explorer</h2>
+    <p style="font-size:0.95rem;line-height:1.7;color:#94a3b8;font-style:italic;">— coming soon —</p>
+  </div>
+
+  <div class="credit-group">
+    <h2>Fairness Definitions Explorer</h2>
+    <p style="font-size:0.95rem;line-height:1.7;color:#94a3b8;font-style:italic;">— coming soon —</p>
+  </div>
+
+</main>
+
+<footer id="site-footer"></footer>
+<script src="../shared/js/footer.js"></script>
+<script data-goatcounter="https://paulohm.goatcounter.com/count"
+        async src="//gc.zgo.at/count.js"></script>
+</body>
+</html>

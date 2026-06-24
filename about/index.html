@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>About — AI Law Lab</title>
+  <link rel="stylesheet" href="../shared/css/base.css">
+  <style>
+    .prose {
+      max-width: 680px;
+      margin: 3rem auto;
+      padding: 0 1.5rem 4rem;
+    }
+    .prose p {
+      font-size: 1rem;
+      line-height: 1.75;
+      color: #334155;
+      margin-bottom: 1.1rem;
+    }
+    .prose a { color: var(--blue); }
+    .prose .sig {
+      margin-top: 2rem;
+      font-style: italic;
+      color: var(--muted);
+    }
+  </style>
+</head>
+<body>
+
+<header id="site-header"></header>
+<script>window.APP_HEADER = { h1: 'About', hideTutorial: true, root: '../' };</script>
+<script src="../shared/js/header.js"></script>
+
+<main class="prose">
+  <p>These four tools let you explore the math behind AI systems in your browser — the word embeddings, neural networks, risk scores, and fairness metrics that show up in court decisions, regulatory proposals, and policy debates. No installation required; everything runs locally in your browser.</p>
+
+  <p>I designed the tools as companions to my law school course on AI, but the subject is not lawyer-specific. The word embeddings here are the same technology inside every large language model. The neural network trains by the same algorithm. The fairness tradeoffs apply to any classifier making consequential decisions. Anyone thinking seriously about AI — whether from law, policy, computer science, or elsewhere — should find something useful.</p>
+
+  <p>I built these as an independent open-source project and retain the copyright; they are not published by Foundation Press. The <a href="https://github.com/ohmpage/ailawlab">source code is on GitHub</a> and free to use, adapt, or extend. I'd welcome feedback, bug reports, and suggestions for new tools — reach me at <a href="mailto:ohm@law.georgetown.edu">ohm@law.georgetown.edu</a>.</p>
+
+  <p>The tools were built in summer 2026 using <a href="https://claude.ai/code">Claude Code</a>, Anthropic's AI coding assistant. I designed the pedagogy and made all the substantive decisions; Claude Code did most of the typing.</p>
+
+  <p class="sig">— Paul Ohm<br>Professor of Law, Georgetown University Law Center</p>
+</main>
+
+<footer id="site-footer"></footer>
+<script src="../shared/js/footer.js"></script>
+<script data-goatcounter="https://paulohm.goatcounter.com/count"
+        async src="//gc.zgo.at/count.js"></script>
+</body>
+</html>
