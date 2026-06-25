@@ -20,12 +20,18 @@ class VectorModel {
   }
 
   async load(vocabUrl, vectorsUrl, onProgress = null) {
+    if (onProgress) onProgress(0);
+
     // Load vocabulary index
     const vocabResp = await fetch(vocabUrl);
     this.vocab = await vocabResp.json();
     this.words = Object.keys(this.vocab).sort((a, b) => this.vocab[a] - this.vocab[b]);
 
-    // Load binary vectors with progress reporting
+    if (onProgress) onProgress(0.02);
+
+    // Load binary vectors with progress reporting.
+    // content-length reflects compressed size; decompressed bytes can exceed it,
+    // so cap the ratio at 1 to prevent displaying > 100%.
     const vecResp = await fetch(vectorsUrl);
     const total = parseInt(vecResp.headers.get('content-length') || '0');
     let loaded = 0;
@@ -36,7 +42,7 @@ class VectorModel {
       if (done) break;
       chunks.push(value);
       loaded += value.length;
-      if (onProgress && total) onProgress(loaded / total);
+      if (onProgress && total) onProgress(0.02 + 0.97 * Math.min(loaded / total, 1));
     }
 
     const buffer = await new Blob(chunks).arrayBuffer();
