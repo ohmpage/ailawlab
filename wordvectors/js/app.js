@@ -206,7 +206,7 @@ const SLIDES = [
     body: `The model learned from billions of words of real text — written
            by humans, reflecting who wrote it and what they assumed.
            Those assumptions live in the geometry. A perfect analogy forms
-           a rectangle; distortion reveals how rough the match is. Try it yourself:`,
+           a parallelogram; distortion reveals how rough the match is. Try it yourself:`,
     draw: drawSlide4,
   },
 ];
@@ -456,43 +456,43 @@ function drawSlide4(sel) {
   addArrowDef(svg, 'arr4b', COLORS.arrowAlt);
   const g = svg.append('g');
 
-  // Real GloVe 6B projection: man : programmer :: woman : prodigy
+  // Real GloVe 6B projection: man : doctor :: woman : nurse
   // Pixel coordinates derived from projectAnalogy() — yields a visibly skewed parallelogram.
   const pts = {
-    man:        { x: 173, y: 232 },
-    programmer: { x: 547, y: 232 },
-    woman:      { x: 191, y:  83 },
-    prodigy:    { x: 454, y: 147 },
+    man:    { x: 173, y: 232 },
+    doctor: { x: 407, y: 232 },
+    woman:  { x: 225, y:  92 },
+    nurse:  { x: 382, y: 131 },
   };
 
   // Shaded parallelogram with dashed border — distortion is the point
   g.append('polygon')
-    .attr('points', [pts.man, pts.programmer, pts.prodigy, pts.woman]
+    .attr('points', [pts.man, pts.doctor, pts.nurse, pts.woman]
       .map(p => `${p.x},${p.y}`).join(' '))
     .attr('fill', '#fce8e8').attr('opacity', 0.7)
     .attr('stroke', '#dda8a8').attr('stroke-width', 1.5).attr('stroke-dasharray', '5,3');
 
-  drawArrow(g, pts.man,   pts.programmer, 'arr4b', { color: COLORS.arrowAlt, width: 2.5 });
-  drawArrow(g, pts.woman, pts.prodigy,    'arr4b', { color: COLORS.arrowAlt, width: 2.5 });
+  drawArrow(g, pts.man,   pts.doctor, 'arr4b', { color: COLORS.arrowAlt, width: 2.5 });
+  drawArrow(g, pts.woman, pts.nurse,  'arr4b', { color: COLORS.arrowAlt, width: 2.5 });
 
-  drawWord(g, pts.man,        'man');
-  drawWord(g, pts.programmer, 'programmer', { fontSize: 9 });
-  drawWord(g, pts.woman,      'woman');
+  drawWord(g, pts.man,    'man');
+  drawWord(g, pts.doctor, 'doctor');
+  drawWord(g, pts.woman,  'woman');
 
   // Result node: red fill with white text, matching the demo's result style
   g.append('circle')
-    .attr('cx', pts.prodigy.x).attr('cy', pts.prodigy.y).attr('r', 22)
+    .attr('cx', pts.nurse.x).attr('cy', pts.nurse.y).attr('r', 22)
     .attr('fill', COLORS.highlight).attr('stroke', COLORS.node).attr('stroke-width', 2);
   g.append('text')
-    .attr('x', pts.prodigy.x).attr('y', pts.prodigy.y + 5)
+    .attr('x', pts.nurse.x).attr('y', pts.nurse.y + 5)
     .attr('text-anchor', 'middle').attr('font-size', 11)
     .attr('font-family', 'Georgia, serif').attr('fill', '#fff')
-    .text('prodigy');
+    .text('nurse');
 
   const eq = g.append('text').attr('x', 60).attr('y', 308)
     .attr('font-size', 15).attr('font-family', 'Georgia, serif');
-  eq.append('tspan').attr('fill', COLORS.node).text('man is to programmer as woman is to ');
-  eq.append('tspan').attr('fill', COLORS.highlight).attr('font-weight', 'bold').text('prodigy');
+  eq.append('tspan').attr('fill', COLORS.node).text('man is to doctor as woman is to ');
+  eq.append('tspan').attr('fill', COLORS.highlight).attr('font-weight', 'bold').text('nurse');
 }
 
 // ─── Word resolution (space → underscore for phrase-capable models) ───────────
@@ -651,11 +651,6 @@ function drawAnalogyViz(wA, wB, wC, wD) {
       .attr('font-family', 'Georgia, serif').attr('fill', textFills[i])
       .text(labels[i]);
   });
-
-  g.append('text').attr('x', iw / 2).attr('y', ih + 32)
-    .attr('text-anchor', 'middle').attr('font-size', 10)
-    .attr('fill', '#888').attr('font-style', 'italic')
-    .text('A perfect analogy forms a rectangle. Distortion shows how rough the match is.');
 }
 
 // ─── Utility ──────────────────────────────────────────────────────────────────
