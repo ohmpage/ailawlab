@@ -72,12 +72,16 @@
     When you assemble a known metric, the app will name it and explain its significance.
   </p>
 
-  <!-- ── Known Metrics drawer (easter egg — opened via window.openAnswerKey()) ── -->
-  <div class="metrics-drawer" id="metrics-drawer">
+  <!-- ── Known Metrics drawer (visible from the start; chips revealed via the link below or an easter egg) ── -->
+  <div class="metrics-drawer open" id="metrics-drawer">
     <div class="drawer-inner">
       <span class="drawer-label">Known Metrics</span>
+      <p class="drawer-teaser" id="drawer-teaser">
+        The Ratio Workspace below names any metric you build that's well known in the fairness literature.
+        Rather not hunt for them yourself?
+        <button type="button" id="btn-reveal-drawer" class="drawer-reveal-link">Reveal a few known metrics</button>.
+      </p>
       <div class="drawer-chips" id="drawer-chips"></div>
-      <button class="drawer-close" id="btn-drawer-close" type="button" aria-label="Close">×</button>
     </div>
   </div>
 
@@ -98,7 +102,7 @@
     <div class="metric-info" id="metric-info"></div>
     <div class="workspace-actions">
       <button id="btn-clear" type="button">Clear</button>
-      <button id="btn-remember" type="button" disabled>Remember ▸</button>
+      <button id="btn-remember" type="button" disabled>Save Metric ▸</button>
     </div>
   </div>
 

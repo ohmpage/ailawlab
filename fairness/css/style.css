@@ -357,12 +357,33 @@ main {
   flex-shrink: 0;
 }
 .metrics-drawer.open .drawer-label { color: #b45309; }
+.drawer-teaser {
+  flex: 1;
+  margin: 0;
+  padding-top: 0.15rem;
+  font-family: sans-serif;
+  font-size: 0.85rem;
+  line-height: 1.5;
+  color: #57534e;
+}
+.metrics-drawer.revealed .drawer-teaser { display: none; }
+.drawer-reveal-link {
+  background: none;
+  border: none;
+  padding: 0;
+  font: inherit;
+  color: var(--blue);
+  text-decoration: underline;
+  cursor: pointer;
+}
+.drawer-reveal-link:hover { color: var(--red); }
 .drawer-chips {
-  display: flex;
+  display: none;
   flex-wrap: wrap;
   gap: 0.4rem;
   flex: 1;
 }
+.metrics-drawer.revealed .drawer-chips { display: flex; }
 .drawer-chip {
   display: inline-flex;
   align-items: center;
@@ -383,20 +404,6 @@ main {
   color: #fff;
   border-color: #d97706;
 }
-.drawer-close {
-  background: none;
-  border: none;
-  cursor: pointer;
-  color: #d97706;
-  font-size: 1.1rem;
-  line-height: 1;
-  padding: 0.1rem 0.3rem;
-  flex-shrink: 0;
-  border-radius: 3px;
-  transition: color 0.12s;
-}
-.drawer-close:hover { color: var(--red); }
-
 /* ── Workspace card ─────────────────────────────────────────────────────── */
 .workspace-card {
   background: var(--white);

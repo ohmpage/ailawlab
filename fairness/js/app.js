@@ -252,8 +252,9 @@ let denCodes      = [];    // cell codes in the denominator zone
 let activeZone    = 'num'; // which zone receives clicks on matrix cells
 let metricsDb     = [];    // loaded from data/metrics.json
 let savedRows     = [];    // { name, formula, values: [v0, v1] }
-let clickHistory = [];        // FIFO of cell codes + '0' for zone clicks; used by all easter eggs
-let cellsSeen    = new Set(); // accumulates unique cell codes clicked; resets after triggering drawer
+let clickHistory   = [];        // FIFO of cell codes + '0' for zone clicks; used by all easter eggs
+let cellsSeen      = new Set(); // accumulates unique cell codes clicked; resets after triggering drawer
+let drawerRevealed = false;     // true once chips are shown; permanent for the session (no re-hide)
 
 // ── Easter egg sequences ──────────────────────────────────────────────────────
 // Phone dialpad layout (mirrors the matrix):
@@ -275,10 +276,6 @@ const KONAMI_SEQ = [
 const JENNY_SEQ = ['n', 'pn', 'p', 'tn', 'pp', '0', 'all'];
 
 const ALL_CELL_CODES = new Set(['tp','fp','fn','tn','p','n','pp','pn','all']);
-
-function drawerIsOpen() {
-  return document.getElementById('metrics-drawer').classList.contains('open');
-}
 
 function checkKonami() {
   if (clickHistory.length < KONAMI_SEQ.length) return false;
@@ -608,14 +605,12 @@ function buildDrawer() {
   ).join('');
 }
 
-window.openAnswerKey = function () {
+window.revealDrawer = function () {
+  if (drawerRevealed) return;
+  drawerRevealed = true;
   buildDrawer();
-  document.getElementById('metrics-drawer').classList.add('open');
+  document.getElementById('metrics-drawer').classList.add('revealed');
 };
-
-function closeAnswerKey() {
-  document.getElementById('metrics-drawer').classList.remove('open');
-}
 
 // ── Event handling ────────────────────────────────────────────────────────────
 document.addEventListener('click', e => {
@@ -632,8 +627,8 @@ document.addEventListener('click', e => {
     return;
   }
 
-  // Drawer close button
-  if (e.target.id === 'btn-drawer-close') { closeAnswerKey(); return; }
+  // Drawer teaser reveal link
+  if (e.target.id === 'btn-reveal-drawer') { revealDrawer(); return; }
 
   // Chip × button (must check before mat-cell, since chips live inside zones not matrices)
   const chipX = e.target.closest('.chip-x');
@@ -652,16 +647,16 @@ document.addEventListener('click', e => {
     if (clickHistory.length > 30) clickHistory.shift();
     cellsSeen.add(code);
     // Sequence-based triggers consume the click (no chip added)
-    if (!drawerIsOpen() && (checkKonami() || checkJenny())) {
+    if (!drawerRevealed && (checkKonami() || checkJenny())) {
       clickHistory = [];
-      openAnswerKey();
+      revealDrawer();
       return;
     }
     clickCell(code);
-    // "All 9 cells seen" fires after the chip is added, non-consuming; resets so it can retrigger
-    if (!drawerIsOpen() && cellsSeen.size === ALL_CELL_CODES.size) {
+    // "All 9 cells seen" fires after the chip is added, non-consuming
+    if (!drawerRevealed && cellsSeen.size === ALL_CELL_CODES.size) {
       cellsSeen = new Set();
-      openAnswerKey();
+      revealDrawer();
     }
     return;
   }
@@ -679,7 +674,7 @@ document.addEventListener('click', e => {
   const dsBtn = e.target.closest('.dataset-btn');
   if (dsBtn) { switchDataset(+dsBtn.dataset.index); return; }
 
-  // Remember button
+  // Save Metric button
   if (e.target.id === 'btn-remember') {
     const metric = recognize();
     savedRows.push({

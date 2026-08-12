@@ -85,7 +85,7 @@ The CRE report (JSTOR community.28327674 — the actual 1988 document) is in the
 
 **Delete a chip:** click the × (revealed on chip hover) or drag the chip anywhere outside the two zones. The app intercepts the drop with a full-page invisible "trash zone" so the browser never plays the snap-back animation.
 
-**Remember:** saves the current ratio (named or custom) to the comparison table below the workspace. Table shows metric name, formula, Group A value, Group B value, and absolute difference.
+**Save Metric:** saves the current ratio (named or custom) to the comparison table below the workspace. Table shows metric name, formula, Group A value, Group B value, and absolute difference.
 
 **Clear:** resets workspace to empty.
 
@@ -133,13 +133,13 @@ Matching is by sorted set of codes — list order doesn't matter.
 
 **Print / Export**: `printMetrics()` opens a new window, writes a full HTML page, and calls `w.print()`. The dataset info block and the footer note are conditional on `currentDataset.id` — COMPAS datasets get the Chouldechova base-rate note; Emily & Greg gets an equal-base-rate note; Gender Shades gets a PPB-balance note.
 
-**Easter egg drawer**: `#metrics-drawer` is a hidden gold-pulsing card that slides open above the workspace when triggered. It lists all 11 recognized metrics as clickable chips; clicking one loads its numerator/denominator codes into the workspace exactly as if the student had clicked those cells manually — recognition and highlighting fire automatically. Three triggers:
+**Known Metrics drawer**: `#metrics-drawer` is a gold-pulsing card sitting above the workspace, visible (`.open`) as soon as the tutorial ends. It starts showing a one-line teaser ("Rather not hunt for them yourself? Reveal a few known metrics.") rather than the metrics themselves — the mystery is softened, not removed. Clicking the teaser's link, or firing any of three hidden triggers, calls `revealDrawer()`, which swaps the teaser for all 11 recognized metrics as clickable chips (via a `.revealed` class: CSS shows `.drawer-chips` and hides `.drawer-teaser`). Clicking a chip loads its numerator/denominator codes into the workspace exactly as if the student had clicked those cells manually — recognition and highlighting fire automatically. There is no close button: once revealed, `drawerRevealed` stays `true` for the rest of the session (not reset by `switchDataset()`), so the reveal is one-way short of a page reload. The three original hidden triggers still work as alternate, undocumented paths to the same reveal:
 
 1. **Konami Code** — click the matrix as a D-pad: FP=↑, N=↓, FN=←, PN=→, A={TP or P}, B={PP or all}. Sequence: ↑↑↓↓←→←→BA.
 2. **8675309** (Tommy Tutone, 1981) — phone dialpad mapped to the matrix (TP=1 FP=2 PP=3 / FN=4 TN=5 PN=6 / P=7 N=8 all=9 / zone-click=0). Sequence: N→PN→P→TN→PP→[zone click]→all = 8-6-7-5-3-0-9.
-3. **All 9 cells explored** — fires automatically after a student clicks every distinct cell at least once. The chip is added normally on the 9th click; then the drawer opens. Resets on dataset switch.
+3. **All 9 cells explored** — fires automatically after a student clicks every distinct cell at least once.
 
-`clickHistory` (FIFO, 30 entries) tracks cell codes plus `'0'` for zone clicks. Sequence triggers consume the final click without adding a chip; the all-cells trigger does not consume. Adding new dialpad codes requires only a new `_SEQ` array and one added `||` condition in the cell-click handler. `cellsSeen` Set and `allCellsTriggered` flag reset in `switchDataset()`.
+`clickHistory` (FIFO, 30 entries) tracks cell codes plus `'0'` for zone clicks. Sequence triggers consume the final click without adding a chip; the all-cells trigger does not consume. All three triggers, and the teaser link, are guarded by `!drawerRevealed` / the idempotency check inside `revealDrawer()`. Adding new dialpad codes requires only a new `_SEQ` array and one added `||` condition in the cell-click handler.
 
 ---
 
@@ -156,6 +156,9 @@ Dataset switcher: four real-world datasets selectable via pill buttons. Each dat
 
 ### Version 3.5 — June 2026
 Known Metrics drawer easter egg. A hidden gold-pulsing card (`#metrics-drawer`) slides open above the workspace showing all 11 recognized metrics as chips. Clicking a chip loads that metric into the workspace as if the student had clicked the cells manually. Three triggers: (1) Konami Code using the matrix as a D-pad; (2) 8675309 via a phone-dialpad mapping of the matrix cells (TP=1…all=9, zone-click=0); (3) automatic reveal after all 9 distinct cells have been clicked at least once. The dialpad scheme makes adding future numeric codes trivial.
+
+### Version 3.6 — August 2026
+Softened the drawer easter egg after beta feedback that the three hidden triggers were too obscure to reliably remember. `#metrics-drawer` is now visible as soon as the tutorial ends, showing a short teaser line and a "Reveal a few known metrics" link in place of the chips — the three original hidden triggers (Konami, 8675309, all-9-cells) still work as undocumented alternate paths to the same reveal. Removed the drawer's close button: once revealed (by any method), the chips replace the teaser for the rest of the session, with no way back short of reloading the page.
 
 ---
 
